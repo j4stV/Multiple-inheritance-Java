@@ -78,6 +78,7 @@ public class RootProcessor extends AbstractProcessor {
             
             // Поле для хранения родительского объекта
             out.println("    protected Object parent;");
+            out.println("    protected Object[] mixinParents;");
             out.println();
             
             // Конструктор
@@ -85,9 +86,34 @@ public class RootProcessor extends AbstractProcessor {
             out.println("        Mixin mixin = this.getClass().getAnnotation(Mixin.class);");
             out.println("        if (mixin != null && mixin.value().length > 0) {");
             out.println("            try {");
+            out.println("                // Установка первого родителя");
             out.println("                parent = mixin.value()[0].getDeclaredConstructor().newInstance();");
+            out.println("                ");
+            out.println("                // Создание массива для всех родителей");
+            out.println("                mixinParents = new Object[mixin.value().length];");
+            out.println("                mixinParents[0] = parent;");
+            out.println("                ");
+            out.println("                // Создание дополнительных родителей");
+            out.println("                for (int i = 1; i < mixin.value().length; i++) {");
+            out.println("                    mixinParents[i] = mixin.value()[i].getDeclaredConstructor().newInstance();");
+            out.println("                }");
+            out.println("                ");
+            out.println("                // Установка цепочки делегации для классов");
+            out.println("                for (int i = 0; i < mixinParents.length - 1; i++) {");
+            out.println("                    Object current = mixinParents[i];");
+            out.println("                    Object next = mixinParents[i + 1];");
+            out.println("                    ");
+            out.println("                    // Если родитель является инстансом корневого класса, то устанавливаем ему следующего родителя");
+            out.println("                    if (current.getClass().getSuperclass().getSimpleName().endsWith(\"Root\")) {");
+            out.println("                        try {");
+            out.println("                            current.getClass().getSuperclass().getDeclaredField(\"parent\").set(current, next);");
+            out.println("                        } catch (NoSuchFieldException e) {");
+            out.println("                            throw new RuntimeException(\"Не удалось установить цепочку делегации: поле 'parent' не найдено\", e);");
+            out.println("                        }");
+            out.println("                    }");
+            out.println("                }");
             out.println("            } catch (Exception e) {");
-            out.println("                throw new RuntimeException(\"Не удалось создать экземпляр родительского класса\", e);");
+            out.println("                throw new RuntimeException(\"Не удалось создать экземпляры родительских классов\", e);");
             out.println("            }");
             out.println("        }");
             out.println("    }");
@@ -149,6 +175,29 @@ public class RootProcessor extends AbstractProcessor {
                 out.println("    }");
                 out.println();
             }
+            
+            // Добавляем методы доступа к миксинам
+            out.println("    /**");
+            out.println("     * Возвращает родительский объект по индексу");
+            out.println("     * @param index индекс родительского объекта");
+            out.println("     * @return родительский объект или null, если индекс выходит за пределы");
+            out.println("     */");
+            out.println("    protected Object getMixinParent(int index) {");
+            out.println("        if (mixinParents == null || index < 0 || index >= mixinParents.length) {");
+            out.println("            return null;");
+            out.println("        }");
+            out.println("        return mixinParents[index];");
+            out.println("    }");
+            out.println();
+            
+            out.println("    /**");
+            out.println("     * Возвращает количество родительских объектов");
+            out.println("     * @return количество родительских объектов");
+            out.println("     */");
+            out.println("    protected int getMixinParentsCount() {");
+            out.println("        return mixinParents == null ? 0 : mixinParents.length;");
+            out.println("    }");
+            out.println();
             
             out.println("}");
         }
