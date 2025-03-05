@@ -11,7 +11,7 @@ public class MyPet extends AnimalRoot {
     public void makeSound() {
         System.out.println("Мой питомец говорит: ");
         nextMakeSound(); // Вызываем метод родителя
-        System.out.println("И хочет гулять!");
+        System.out.println(" I want хочет гулять!");
     }
 
     @Override
