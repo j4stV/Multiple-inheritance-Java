@@ -58,9 +58,9 @@ public class RootProcessor extends AbstractProcessor {
     private void generateRootClass(String packageName, String interfaceName, String rootClassName, TypeElement interfaceElement) throws IOException {
         JavaFileObject javaFile = filer.createSourceFile(packageName + "." + rootClassName, interfaceElement);
         List<? extends Element> enclosedElements = interfaceElement.getEnclosedElements()
-                .stream()
-                .filter(e -> e.getKind() == ElementKind.METHOD)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(e -> e.getKind() == ElementKind.METHOD)
+            .collect(Collectors.toList());
 
         try (PrintWriter out = new PrintWriter(javaFile.openWriter())) {
             // Создаем заголовок файла
@@ -75,12 +75,12 @@ public class RootProcessor extends AbstractProcessor {
             out.println(" */");
             out.println("public abstract class " + rootClassName + " implements " + interfaceName + " {");
             out.println();
-            
+
             // Поле для хранения родительского объекта
             out.println("    protected Object parent;");
             out.println("    protected Object[] mixinParents;");
             out.println();
-            
+
             // Конструктор
             out.println("    public " + rootClassName + "() {");
             out.println("        Mixin mixin = this.getClass().getAnnotation(Mixin.class);");
@@ -104,7 +104,7 @@ public class RootProcessor extends AbstractProcessor {
             out.println("                    Object next = mixinParents[i + 1];");
             out.println("                    ");
             out.println("                    // Если родитель является инстансом корневого класса, то устанавливаем ему следующего родителя");
-            out.println("                    if (current.getClass().getSuperclass().getSimpleName().endsWith(\"Root\")) {");
+            out.println("                    if (current.getClass().getSuperclass().getSimpleName().endsWith(\"Root\") && current.getClass().getSuperclass().getDeclaredField(\"parent\") != null){");
             out.println("                        try {");
             out.println("                            current.getClass().getSuperclass().getDeclaredField(\"parent\").set(current, next);");
             out.println("                        } catch (NoSuchFieldException e) {");
@@ -118,32 +118,32 @@ public class RootProcessor extends AbstractProcessor {
             out.println("        }");
             out.println("    }");
             out.println();
-            
+
             // Для каждого метода в интерфейсе создаем метод nextXXX
             for (Element methodElement : enclosedElements) {
                 ExecutableElement method = (ExecutableElement) methodElement;
                 String methodName = method.getSimpleName().toString();
                 String nextMethodName = "next" + Character.toUpperCase(methodName.charAt(0)) + methodName.substring(1);
-                
+
                 // Получаем типы параметров и возвращаемый тип
                 String returnType = method.getReturnType().toString();
                 if (returnType.equals("void")) {
                     returnType = "void";
                 }
-                
+
                 List<? extends VariableElement> parameters = method.getParameters();
                 String parameterList = parameters.stream()
-                        .map(p -> p.asType() + " " + p.getSimpleName())
-                        .collect(Collectors.joining(", "));
-                
+                    .map(p -> p.asType() + " " + p.getSimpleName())
+                    .collect(Collectors.joining(", "));
+
                 String parameterTypesList = parameters.stream()
-                        .map(p -> p.asType().toString() + ".class")
-                        .collect(Collectors.joining(", "));
-                
+                    .map(p -> p.asType().toString() + ".class")
+                    .collect(Collectors.joining(", "));
+
                 String parameterNames = parameters.stream()
-                        .map(p -> p.getSimpleName().toString())
-                        .collect(Collectors.joining(", "));
-                
+                    .map(p -> p.getSimpleName().toString())
+                    .collect(Collectors.joining(", "));
+
                 // Генерируем метод nextXXX
                 out.println("    protected " + returnType + " " + nextMethodName + "(" + parameterList + ") {");
                 out.println("        if (parent == null) {");
@@ -155,27 +155,27 @@ public class RootProcessor extends AbstractProcessor {
                 out.println("        }");
                 out.println();
                 out.println("        try {");
-                
+
                 if (parameters.isEmpty()) {
                     out.println("            Method method = parent.getClass().getMethod(\"" + methodName + "\");");
                 } else {
                     out.println("            Method method = parent.getClass().getMethod(\"" + methodName + "\", " + parameterTypesList + ");");
                 }
-                
+
                 if (!returnType.equals("void")) {
                     out.println("            return (" + returnType + ") method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
                 } else {
                     out.println("            method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
                 }
-                
+
                 out.println("        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {");
                 out.println("            throw new RuntimeException(\"Ошибка при вызове метода родительского класса\", e);");
                 out.println("        }");
-                
+
                 out.println("    }");
                 out.println();
             }
-            
+
             // Добавляем методы доступа к миксинам
             out.println("    /**");
             out.println("     * Возвращает родительский объект по индексу");
@@ -189,7 +189,7 @@ public class RootProcessor extends AbstractProcessor {
             out.println("        return mixinParents[index];");
             out.println("    }");
             out.println();
-            
+
             out.println("    /**");
             out.println("     * Возвращает количество родительских объектов");
             out.println("     * @return количество родительских объектов");
@@ -198,11 +198,11 @@ public class RootProcessor extends AbstractProcessor {
             out.println("        return mixinParents == null ? 0 : mixinParents.length;");
             out.println("    }");
             out.println();
-            
+
             out.println("}");
         }
     }
-    
+
     private String getDefaultReturnValue(String returnType) {
         switch (returnType) {
             case "byte":

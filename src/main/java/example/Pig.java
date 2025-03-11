@@ -3,19 +3,18 @@ package example;
 import inheritance.annotations.Mixin;
 
 /**
- * Реализация интерфейса Pet
+ * Пример класса-родителя
  */
 @Mixin({MyPet.class})
-public class Cat extends AnimalRoot {
+public class Pig extends AnimalRoot {
     @Override
     public void makeSound() {
-        System.out.println("I am cat");
+        System.out.println("I am pig");
         nextMakeSound();
-        System.out.println("Still cat");
     }
 
     @Override
     public String getType() {
-        return "Мурка";
+        return "Dog";
     }
-} 
+}
