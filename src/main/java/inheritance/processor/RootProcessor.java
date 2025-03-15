@@ -80,6 +80,16 @@ public class RootProcessor extends AbstractProcessor {
             // Поле для хранения родительского объекта
             out.println("    protected Object parent;");
             out.println();
+            
+            // Добавляем статическое поле для отслеживания глубины рекурсии
+            out.println("    private static final int MAX_CALL_DEPTH = 20;");
+            out.println("    private static final ThreadLocal<Integer> callDepth = new ThreadLocal<Integer>() {");
+            out.println("        @Override");
+            out.println("        protected Integer initialValue() {");
+            out.println("            return 0;");
+            out.println("        }");
+            out.println("    };");
+            out.println();
 
             // Пустой конструктор без логики инициализации
             out.println("    public " + rootClassName + "() {");
@@ -124,7 +134,7 @@ public class RootProcessor extends AbstractProcessor {
                     .map(p -> p.getSimpleName().toString())
                     .collect(Collectors.joining(", "));
 
-                // Генерируем метод nextXXX
+                // Генерируем метод nextXXX с проверкой глубины вызовов
                 out.println("    protected " + returnType + " " + nextMethodName + "(" + parameterList + ") {");
                 out.println("        if (parent == null) {");
                 if (!returnType.equals("void")) {
@@ -134,6 +144,20 @@ public class RootProcessor extends AbstractProcessor {
                 }
                 out.println("        }");
                 out.println();
+                
+                // Проверка и увеличение счетчика глубины вызовов
+                out.println("        int currentDepth = callDepth.get();");
+                out.println("        if (currentDepth >= MAX_CALL_DEPTH) {");
+                out.println("            System.out.println(\"Превышена максимальная глубина вызовов методов: \" + MAX_CALL_DEPTH + \". Возможно, обнаружен цикл.\");");
+                if (!returnType.equals("void")) {
+                    out.println("            return " + getDefaultReturnValue(returnType) + ";");
+                } else {
+                    out.println("            return;");
+                }
+                out.println("        }");
+                out.println("        callDepth.set(currentDepth + 1);");
+                out.println();
+                
                 out.println("        try {");
 
                 if (parameters.isEmpty()) {
@@ -143,15 +167,18 @@ public class RootProcessor extends AbstractProcessor {
                 }
 
                 if (!returnType.equals("void")) {
-                    out.println("            return (" + returnType + ") method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
+                    out.println("            " + returnType + " result = (" + returnType + ") method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
+                    out.println("            callDepth.set(currentDepth); // Восстанавливаем счетчик");
+                    out.println("            return result;");
                 } else {
                     out.println("            method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
+                    out.println("            callDepth.set(currentDepth); // Восстанавливаем счетчик");
                 }
 
                 out.println("        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {");
+                out.println("            callDepth.set(currentDepth); // Восстанавливаем счетчик в случае ошибки");
                 out.println("            throw new RuntimeException(\"Ошибка при вызове метода родительского класса\", e);");
                 out.println("        }");
-
                 out.println("    }");
                 out.println();
             }

@@ -24,4 +24,12 @@ public class B extends SomeInterfaceRoot {
     public void methodB() {
         System.out.println("B.methodB(): Выполнение уникального метода класса B");
     }
+    
+    /**
+     * Получает родительский объект
+     * @return Родительский объект
+     */
+    public Object getParent() {
+        return parent;
+    }
 } 

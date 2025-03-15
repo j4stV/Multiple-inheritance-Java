@@ -24,4 +24,12 @@ public class C extends SomeInterfaceRoot {
     public void methodC() {
         System.out.println("C.methodC(): Выполнение уникального метода класса C");
     }
+    
+    /**
+     * Получает родительский объект
+     * @return Родительский объект
+     */
+    public Object getParent() {
+        return parent;
+    }
 } 
