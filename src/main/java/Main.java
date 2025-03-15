@@ -1,48 +1,31 @@
-import example.MyPet;
-import example.Dog;
-import example.Animal;
-import example.DualInheritance;
+import example.diamond.*;
 
+/**
+ * Главный класс для демонстрации работы механизма ромбовидного наследования
+ */
 public class Main {
+    
+    /**
+     * Точка входа в программу
+     * @param args аргументы командной строки
+     */
     public static void main(String[] args) {
-        System.out.println("=== Демонстрация множественного наследования с одним родителем ===");
-        
-        // Создаем экземпляр класса, использующего механизм множественного наследования
-        MyPet pet = new MyPet();
-
-        System.out.println("Создан экземпляр MyPet");
-
-        // Проверяем, что pet является экземпляром Animal
-        System.out.println("pet instanceof Animal: " + (pet instanceof Animal));
-
-        // Проверяем, что аннотация Mixin присутствует
-        System.out.println("Аннотация Mixin присутствует: " + (pet.getClass().getAnnotation(inheritance.annotations.Mixin.class) != null));
-
-        // Вызываем методы
-        System.out.println("\nВызываем метод makeSound():");
-        pet.makeSound();
-
-        System.out.println("\nВызываем метод getType():");
-        System.out.println("Тип: " + pet.getType());
-        
-        System.out.println("\n\n=== Демонстрация множественного наследования с двумя родителями ===");
+        System.out.println("=== Демонстрация механизма множественного наследования в Java ===");
         
         try {
-            // Создаем экземпляр класса с двойным наследованием
-            DualInheritance dualPet = new DualInheritance();
+            // Запускаем тест ромбовидного наследования
+            DiamondTest.runTest();
             
-            System.out.println("Создан экземпляр DualInheritance");
+            // Создаем и тестируем отдельный экземпляр D
+            System.out.println("\n=== Дополнительная демонстрация работы класса D ===");
+            D d = SomeInterfaceRoot.createInstance(D.class);
+            d.method();
             
-            // Вызываем методы
-            System.out.println("\nВызываем методы наследуемые от Animal (через Dog):");
-            dualPet.makeSound();
-            System.out.println("Тип: " + dualPet.getType());
-            
-            System.out.println("\nДемонстрация доступа к обоим родителям:");
-            dualPet.showMultipleInheritance();
         } catch (Exception e) {
-            System.out.println("Ошибка при создании DualInheritance: " + e.getMessage());
+            System.err.println("Ошибка во время выполнения: " + e.getMessage());
             e.printStackTrace();
         }
+        
+        System.out.println("\n=== Демонстрация завершена ===");
     }
 }
