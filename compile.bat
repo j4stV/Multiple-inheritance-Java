@@ -1,13 +1,9 @@
 @echo off
 echo === Скрипт компиляции проекта ромбовидного наследования ===
 
-REM Создаем директории, если их нет
-if not exist bin mkdir bin
-if not exist bin\META-INF mkdir bin\META-INF
-if not exist bin\META-INF\services mkdir bin\META-INF\services
-
-REM Создаем service file для процессора аннотаций
-echo inheritance.processor.RootProcessor > bin\META-INF\services\javax.annotation.processing.Processor
+REM Очистка и создание директорий
+if exist bin rmdir /s /q bin
+mkdir bin
 
 REM Компилируем аннотации
 echo Компиляция аннотаций...
@@ -24,6 +20,13 @@ if errorlevel 1 (
   echo Ошибка при компиляции процессора аннотаций
   exit /b 1
 )
+
+REM Создаем директории для сервисного файла
+mkdir bin\META-INF
+mkdir bin\META-INF\services
+
+REM Создаем сервисный файл для процессора аннотаций
+echo inheritance.processor.RootProcessor > bin\META-INF\services\javax.annotation.processing.Processor
 
 REM Компилируем фабрику
 echo Компиляция фабрики...
