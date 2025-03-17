@@ -171,27 +171,41 @@ if "%TEST_TO_RUN%"=="linear" (
     )
 ) else if "%TEST_TO_RUN%"=="repeatedAncestor" (
     REM Компилируем и запускаем тесты для случая повторяющегося предка
-    if exist src\test\java\inheritance\tests\repeatedAncestor\*.java (
-        echo Компиляция классов для случая повторяющегося предка...
-        
-        REM Поиск всех Java файлов в директории
-        setlocal enabledelayedexpansion
-        set "java_files="
-        for %%f in (src\test\java\inheritance\tests\repeatedAncestor\*.java) do (
-            set "java_files=!java_files! %%f"
-        )
-        
-        javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% %java_files%
-        if errorlevel 1 (
-            echo Ошибка при компиляции классов для случая повторяющегося предка!
-            exit /b 1
-        )
-        
-        echo Запуск теста для случая повторяющегося предка...
-        java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.repeatedAncestor.RepeatedAncestorTest
-    ) else (
-        echo Тест для случая повторяющегося предка пропущен - файлы не найдены.
+    echo Компиляция интерфейса для повторяющегося предка...
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/repeatedAncestor/RepeatedAncestorInterface.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции интерфейса для повторяющегося предка!
+        exit /b 1
     )
+    
+    echo Компиляция классов для повторяющегося предка...
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/repeatedAncestor/ClassA.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции ClassA!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/repeatedAncestor/ClassB.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции ClassB!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/repeatedAncestor/ClassD.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции ClassD!
+        exit /b 1
+    )
+    
+    echo Компиляция теста повторяющегося предка...
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/repeatedAncestor/RepeatedAncestorTest.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции теста повторяющегося предка!
+        exit /b 1
+    )
+    
+    echo Запуск теста повторяющегося предка...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.repeatedAncestor.RepeatedAncestorTest
 ) else if "%TEST_TO_RUN%"=="nestedDiamond" (
     REM Компилируем и запускаем тесты для вложенного ромбовидного наследования
     if exist src\test\java\inheritance\tests\nestedDiamond\*.java (
@@ -251,6 +265,17 @@ if "%TEST_TO_RUN%"=="linear" (
     echo Запуск теста циклического наследования...
     java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.cyclic.CyclicInheritanceTest
     
+    REM Повторяющийся предок
+    echo Компиляция классов для повторяющегося предка...
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/repeatedAncestor/*.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции классов для повторяющегося предка!
+        exit /b 1
+    )
+    
+    echo Запуск теста повторяющегося предка...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.repeatedAncestor.RepeatedAncestorTest
+    
     REM Глубокая цепочка наследования
     if exist src\test\java\inheritance\tests\deepChain\*.java (
         echo Компиляция классов для глубокой цепочки наследования...
@@ -272,29 +297,6 @@ if "%TEST_TO_RUN%"=="linear" (
         java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.deepChain.DeepChainInheritanceTest
     ) else (
         echo Тест глубокой цепочки наследования пропущен - файлы не найдены.
-    )
-    
-    REM Случай повторяющегося предка
-    if exist src\test\java\inheritance\tests\repeatedAncestor\*.java (
-        echo Компиляция классов для случая повторяющегося предка...
-        
-        REM Поиск всех Java файлов в директории
-        setlocal enabledelayedexpansion
-        set "java_files="
-        for %%f in (src\test\java\inheritance\tests\repeatedAncestor\*.java) do (
-            set "java_files=!java_files! %%f"
-        )
-        
-        javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% %java_files%
-        if errorlevel 1 (
-            echo Ошибка при компиляции классов для случая повторяющегося предка!
-            exit /b 1
-        )
-        
-        echo Запуск теста для случая повторяющегося предка...
-        java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.repeatedAncestor.RepeatedAncestorTest
-    ) else (
-        echo Тест для случая повторяющегося предка пропущен - файлы не найдены.
     )
     
     REM Вложенное ромбовидное наследование
