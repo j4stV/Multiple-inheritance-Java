@@ -24,13 +24,13 @@ public class Main {
             System.out.println("=== Starting diamond inheritance test ===");
             
             // Create an instance of class D through the factory
-            System.out.println("Creating instance of class D...");
-            D d = SomeInterfaceRoot.createInstance(D.class);
-            System.out.println("Instance of class D created successfully.");
+            System.out.println("Creating instance of class F...");
+            F d = SomeInterfaceRoot.createInstance(F.class);
+            System.out.println("Instance of class F created successfully.");
             
             // Demonstration of inheritance hierarchy
             System.out.println("Showing mixin hierarchy...");
-            d.showMixinHierarchy();
+            
             
             // Demonstration of method chain call
             System.out.println("\n=== Demonstration of method chain call ===");

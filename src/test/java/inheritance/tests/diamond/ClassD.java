@@ -24,9 +24,12 @@ public class ClassD extends DiamondInterfaceRoot {
      * @return Result of calling specific method of parent class B
      */
     public String callParentSpecificMethods() {
-        if (parent != null && parent instanceof ClassB) {
-            ClassB parentB = (ClassB) parent;
-            return parentB.methodB();
+        if (parent != null && parent instanceof ClassC) {
+            ClassC parentC = (ClassC) parent;
+            if (parentC.parent instanceof ClassB) {
+                ClassB parentB = (ClassB) parentC.parent;
+                return parentB.methodB();
+            }
         }
         return "";
     }

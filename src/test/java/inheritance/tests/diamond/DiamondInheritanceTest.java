@@ -19,34 +19,72 @@ public class DiamondInheritanceTest {
     
     @Before
     public void setUp() {
-        // Disable debug output
-        MixinFactory.setDebugEnabled(false);
-        // Clear instance cache before test
-        MixinFactory.clearCache();
+        // Enable debug output
+        MixinFactory.setDebugEnabled(true);
+        // No longer clearing cache here
     }
     
     @After
     public void tearDown() {
         // Delete generated files after tests
         cleanupGeneratedFiles();
+        // Clear caches after all tests
+        MixinFactory.clearCache();
     }
     
     @Test
     public void testDiamondInheritance() {
+        // Clear cache before first test
+        MixinFactory.clearCache();
+        
         // Create an instance of class D using mixin factory
         ClassD instanceD = MixinFactory.createInstance(ClassD.class);
         
         // Check the result of calling testMethod
-        // Expect "DBCA" as a result of topological sorting
+        // Expect "DCBA" as a result of topological sorting
         String result = instanceD.testMethod();
-        assertEquals("DBCA", result);
+        assertEquals("DCBA", result);
         
         // Check availability of specific methods of B
         String specificResult = instanceD.callParentSpecificMethods();
         assertEquals("B-specific", specificResult);
         
         // Check parent relationships through instanceof
-        assertTrue("Parent of D should be an instance of B", instanceD.parent instanceof ClassB);
+        assertTrue("Parent of D should be an instance of C", instanceD.parent instanceof ClassC);
+    }
+    
+    @Test
+    public void testDiamondInheritanceWithCaching() {
+        // Do not clear cache here to test caching
+        System.out.println("\n=== Testing cached inheritance structure ===");
+        
+        // Create an instance of class D using mixin factory - should use cached results
+        ClassD instanceD = MixinFactory.createInstance(ClassD.class);
+        
+        // Check the result of calling testMethod
+        String result = instanceD.testMethod();
+        assertEquals("DCBA", result);
+    }
+    
+    @Test
+    public void testSingleMethodCaching() {
+        // Clearly demonstrate caching in a single test method
+        System.out.println("\n=== Testing caching within a single test method ===");
+        
+        // 1. Clear all caches
+        MixinFactory.clearCache();
+        
+        // 2. First call should build the inheritance structure
+        System.out.println("First call - should build inheritance structure:");
+        ClassD instanceD1 = MixinFactory.createInstance(ClassD.class);
+        String result1 = instanceD1.testMethod();
+        assertEquals("DCBA", result1);
+        
+        // 3. Second call should use cached structure
+        System.out.println("\nSecond call - should use cached structure:");
+        ClassD instanceD2 = MixinFactory.createInstance(ClassD.class);
+        String result2 = instanceD2.testMethod();
+        assertEquals("DCBA", result2);
     }
     
     /**

@@ -17,6 +17,8 @@ public class MixinFactory {
     private static final Map<Class<?>, Object> instanceCache = new HashMap<>();
     private static boolean debugEnabled = true;
     
+    private static final Map<Class<?>, List<Class<?>>> sortedClassesCache = new HashMap<>();
+    
     /**
      * Enables or disables debug output
      * @param enabled true to enable, false to disable
@@ -36,32 +38,48 @@ public class MixinFactory {
         if (debugEnabled) {
             System.out.println("\n=== Creating instance of class with multiple inheritance ===");
             System.out.println("Target class: " + clazz.getName());
+            System.out.println("Cache contains key: " + sortedClassesCache.containsKey(clazz));
+        }
+        
+        List<Class<?>> sortedClasses;
+        if (sortedClassesCache.containsKey(clazz)) {
+            if (debugEnabled) {
+                System.out.println("\n=== Using cached inheritance order ===");
+                int i = 1;
+                for (Class<?> c : sortedClassesCache.get(clazz)) {
+                    System.out.println((i++) + ". " + c.getSimpleName());
+                }
+            }
+            
+            sortedClasses = sortedClassesCache.get(clazz);
+        } else {
+            Map<Class<?>, List<Class<?>>> inheritanceGraph = buildInheritanceGraph(clazz);
+            
+            if (debugEnabled) {
+                System.out.println("\n=== Inheritance graph ===");
+                for (Map.Entry<Class<?>, List<Class<?>>> entry : inheritanceGraph.entrySet()) {
+                    System.out.println(entry.getKey().getSimpleName() + " inherits from: " + 
+                        entry.getValue().stream()
+                            .map(Class::getSimpleName)
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("<no parents>"));
+                }
+            }
+            
+            sortedClasses = topologicalSort(inheritanceGraph);
+            
+            if (debugEnabled) {
+                System.out.println("\n=== Topological sort result ===");
+                System.out.println("Order of class creation and linking (from initial to final):");
+                for (int i = 0; i < sortedClasses.size(); i++) {
+                    System.out.println((i + 1) + ". " + sortedClasses.get(i).getSimpleName());
+                }
+            }
+            
+            sortedClassesCache.put(clazz, sortedClasses);
         }
         
         instanceCache.clear();
-        
-        Map<Class<?>, List<Class<?>>> inheritanceGraph = buildInheritanceGraph(clazz);
-        
-        if (debugEnabled) {
-            System.out.println("\n=== Inheritance graph ===");
-            for (Map.Entry<Class<?>, List<Class<?>>> entry : inheritanceGraph.entrySet()) {
-                System.out.println(entry.getKey().getSimpleName() + " inherits from: " + 
-                    entry.getValue().stream()
-                        .map(Class::getSimpleName)
-                        .reduce((a, b) -> a + ", " + b)
-                        .orElse("<no parents>"));
-            }
-        }
-        
-        List<Class<?>> sortedClasses = topologicalSort(inheritanceGraph);
-        
-        if (debugEnabled) {
-            System.out.println("\n=== Topological sort result ===");
-            System.out.println("Order of class creation and linking (from initial to final):");
-            for (int i = 0; i < sortedClasses.size(); i++) {
-                System.out.println((i + 1) + ". " + sortedClasses.get(i).getSimpleName());
-            }
-        }
         
         createInstances(sortedClasses);
         
@@ -275,5 +293,7 @@ public class MixinFactory {
      */
     public static void clearCache() {
         instanceCache.clear();
+        sortedClassesCache.clear();
     }
+    
 } 
