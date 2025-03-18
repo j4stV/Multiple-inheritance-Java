@@ -6,6 +6,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.*;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.type.TypeVariable;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
@@ -61,7 +62,10 @@ public class RootProcessor extends AbstractProcessor {
             .stream()
             .filter(e -> e.getKind() == ElementKind.METHOD)
             .collect(Collectors.toList());
-
+        
+        // Получаем параметры типа интерфейса
+        List<? extends TypeParameterElement> typeParameters = interfaceElement.getTypeParameters();
+        
         try (PrintWriter out = new PrintWriter(javaFile.openWriter())) {
             // Создаем заголовок файла
             out.println("package " + packageName + ";");
@@ -70,11 +74,26 @@ public class RootProcessor extends AbstractProcessor {
             out.println("import inheritance.factory.MixinFactory;");
             out.println("import java.lang.reflect.Method;");
             out.println("import java.lang.reflect.InvocationTargetException;");
+            out.println("import java.lang.reflect.Type;");
+            out.println("import java.lang.reflect.ParameterizedType;");
             out.println();
             out.println("/**");
             out.println(" * Автоматически сгенерированный корневой класс для интерфейса " + interfaceName);
+            if (!typeParameters.isEmpty()) {
+                out.println(" * @param <" + formatTypeParameters(typeParameters) + "> Параметры типа");
+            }
             out.println(" */");
-            out.println("public abstract class " + rootClassName + " implements " + interfaceName + " {");
+            
+            // Создаем объявление класса с параметрами типа, если они есть
+            out.print("public abstract class " + rootClassName);
+            if (!typeParameters.isEmpty()) {
+                out.print("<" + formatTypeParameters(typeParameters) + ">");
+            }
+            out.print(" implements " + interfaceName);
+            if (!typeParameters.isEmpty()) {
+                out.print("<" + formatTypeParameters(typeParameters) + ">");
+            }
+            out.println(" {");
             out.println();
 
             // Поле для хранения родительского объекта
@@ -117,17 +136,10 @@ public class RootProcessor extends AbstractProcessor {
 
                 // Получаем типы параметров и возвращаемый тип
                 String returnType = method.getReturnType().toString();
-                if (returnType.equals("void")) {
-                    returnType = "void";
-                }
-
+                
                 List<? extends VariableElement> parameters = method.getParameters();
                 String parameterList = parameters.stream()
                     .map(p -> p.asType() + " " + p.getSimpleName())
-                    .collect(Collectors.joining(", "));
-
-                String parameterTypesList = parameters.stream()
-                    .map(p -> p.asType().toString() + ".class")
                     .collect(Collectors.joining(", "));
 
                 String parameterNames = parameters.stream()
@@ -159,11 +171,30 @@ public class RootProcessor extends AbstractProcessor {
                 out.println();
                 
                 out.println("        try {");
-
+                
+                // Для дженериков используем другой подход к получению метода
                 if (parameters.isEmpty()) {
                     out.println("            Method method = parent.getClass().getMethod(\"" + methodName + "\");");
                 } else {
-                    out.println("            Method method = parent.getClass().getMethod(\"" + methodName + "\", " + parameterTypesList + ");");
+                    out.println("            // Создаем массив типов параметров");
+                    out.println("            Class<?>[] paramTypes = new Class<?>[" + parameters.size() + "];");
+                    
+                    // Для каждого параметра определяем его тип
+                    for (int i = 0; i < parameters.size(); i++) {
+                        VariableElement param = parameters.get(i);
+                        String paramType = param.asType().toString();
+                        
+                        // Обработка типовых параметров
+                        if (isTypeVariable(paramType, typeParameters)) {
+                            out.println("            // Для дженериков используем Object.class");
+                            out.println("            paramTypes[" + i + "] = Object.class;");
+                        } else {
+                            // Для примитивных типов и обычных классов
+                            out.println("            paramTypes[" + i + "] = " + getClassForType(paramType) + ";");
+                        }
+                    }
+                    
+                    out.println("            Method method = parent.getClass().getMethod(\"" + methodName + "\", paramTypes);");
                 }
 
                 if (!returnType.equals("void")) {
@@ -185,6 +216,75 @@ public class RootProcessor extends AbstractProcessor {
 
             out.println("}");
         }
+    }
+    
+    /**
+     * Проверяет, является ли тип параметром типа из списка параметров
+     * 
+     * @param typeName Имя типа для проверки
+     * @param typeParameters Список параметров типа
+     * @return true, если тип является параметром типа
+     */
+    private boolean isTypeVariable(String typeName, List<? extends TypeParameterElement> typeParameters) {
+        for (TypeParameterElement tp : typeParameters) {
+            if (tp.getSimpleName().toString().equals(typeName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Возвращает строку для получения объекта Class для заданного типа
+     * 
+     * @param typeName Имя типа
+     * @return Строка для получения Class
+     */
+    private String getClassForType(String typeName) {
+        switch (typeName) {
+            case "byte": return "byte.class";
+            case "short": return "short.class";
+            case "int": return "int.class";
+            case "long": return "long.class";
+            case "float": return "float.class";
+            case "double": return "double.class";
+            case "boolean": return "boolean.class";
+            case "char": return "char.class";
+            case "void": return "void.class";
+            default:
+                // Обрабатываем параметризованные типы
+                if (typeName.contains("<")) {
+                    // Для дженериков берем только базовый тип
+                    String baseType = typeName.substring(0, typeName.indexOf('<'));
+                    return baseType + ".class";
+                }
+                // Для обычных классов
+                return typeName + ".class";
+        }
+    }
+    
+    /**
+     * Форматирует параметры типа для использования в объявлении класса
+     * 
+     * @param typeParameters Список параметров типа
+     * @return Строка с форматированными параметрами типа
+     */
+    private String formatTypeParameters(List<? extends TypeParameterElement> typeParameters) {
+        return typeParameters.stream()
+            .map(tp -> {
+                String typeName = tp.getSimpleName().toString();
+                List<? extends TypeMirror> bounds = tp.getBounds();
+                
+                if (bounds.isEmpty() || bounds.size() == 1 && bounds.get(0).toString().equals("java.lang.Object")) {
+                    return typeName;
+                } else {
+                    String boundsList = bounds.stream()
+                        .map(TypeMirror::toString)
+                        .collect(Collectors.joining(" & "));
+                    return typeName + " extends " + boundsList;
+                }
+            })
+            .collect(Collectors.joining(", "));
     }
 
     private String getDefaultReturnValue(String returnType) {

@@ -229,6 +229,108 @@ if "%TEST_TO_RUN%"=="linear" (
     ) else (
         echo Тест вложенного ромбовидного наследования пропущен - файлы не найдены.
     )
+) else if "%TEST_TO_RUN%"=="generic" (
+    REM Компилируем и запускаем тесты для дженериков
+    echo Компиляция интерфейса и классов для дженериков...
+    
+    REM Компилируем интерфейс с дженериками
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/GenericInterface.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции интерфейса с дженериками!
+        exit /b 1
+    )
+    
+    REM Компилируем классы с дженериками
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/StringContainer.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции StringContainer!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/EnhancedStringContainer.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции EnhancedStringContainer!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/IntegerContainer.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции IntegerContainer!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/MixedTypeContainer.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции MixedTypeContainer!
+        exit /b 1
+    )
+    
+    echo Компиляция теста для дженериков...
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/GenericInheritanceTest.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции теста для дженериков!
+        exit /b 1
+    )
+    
+    echo Запуск теста для дженериков...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.generic.GenericInheritanceTest
+) else if "%TEST_TO_RUN%"=="topological" (
+    REM Компилируем и запускаем тесты для топологической сортировки
+    echo Компиляция интерфейса и классов для топологической сортировки...
+    
+    REM Компилируем интерфейс
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/TopologicalInterface.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции интерфейса для топологической сортировки!
+        exit /b 1
+    )
+    
+    REM Компилируем базовые классы
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/NodeA.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции NodeA!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/NodeB.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции NodeB!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/NodeC.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции NodeC!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/NodeD.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции NodeD!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/NodeE.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции NodeE!
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/NodeF.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции NodeF!
+        exit /b 1
+    )
+    
+    echo Компиляция теста для топологической сортировки...
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/TopologicalSortTest.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции теста для топологической сортировки!
+        exit /b 1
+    )
+    
+    echo Запуск теста для топологической сортировки...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.topological.TopologicalSortTest
 ) else if "%TEST_TO_RUN%"=="all" (
     REM Запускаем все тесты
     
@@ -321,6 +423,28 @@ if "%TEST_TO_RUN%"=="linear" (
     ) else (
         echo Тест вложенного ромбовидного наследования пропущен - файлы не найдены.
     )
+    
+    REM Тесты для дженериков
+    echo Компиляция классов для дженериков...
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/generic/*.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции классов для дженериков!
+        exit /b 1
+    )
+    
+    echo Запуск тестов для дженериков...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.generic.GenericInheritanceTest
+    
+    REM Тесты для топологической сортировки
+    echo Компиляция классов для топологической сортировки...
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/topological/*.java
+    if errorlevel 1 (
+        echo Ошибка при компиляции классов для топологической сортировки!
+        exit /b 1
+    )
+    
+    echo Запуск тестов для топологической сортировки...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.topological.TopologicalSortTest
 )
 
 echo Тесты выполнены! 
