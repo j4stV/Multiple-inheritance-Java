@@ -3,38 +3,38 @@ package inheritance.tests.repeatedAncestor;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс D для теста с повторяющимся предком
- * Наследуется от классов A и B через аннотацию @Mixin
- * При этом класс A является общим предком - как напрямую, так и через B
+ * Class D for test with repeated ancestor
+ * Inherits from classes A and B through @Mixin annotation
+ * Class A is a common ancestor - both directly and through B
  */
 @Mixin({ClassA.class, ClassB.class})
 public class ClassD extends RepeatedAncestorInterfaceRoot {
     /**
-     * Реализация метода из интерфейса
-     * @return "D" + результат вызова метода из родительского класса
+     * Implementation of method from interface
+     * @return "D" + result of calling method from parent class
      */
     public String testMethod() {
-        System.out.println("D.testMethod(): начало выполнения");
+        System.out.println("D.testMethod(): execution start");
         String result = "D" + nextTestMethod();
-        System.out.println("D.testMethod(): конец выполнения");
+        System.out.println("D.testMethod(): execution end");
         return result;
     }
     
     /**
-     * Метод для проверки доступа к методам родительских классов
-     * @return Комбинация результатов вызова родительских специфических методов
+     * Method for checking access to parent classes' methods
+     * @return Combination of results from calling parent-specific methods
      */
     public String callParentSpecificMethods() {
-        // Формируем результат вызовов
+        // Form the result of calls
         StringBuilder result = new StringBuilder();
         
-        // Проверяем доступ к методу класса A
+        // Check access to class A method
         if (parent instanceof ClassA) {
             ClassA parentA = (ClassA) parent;
             result.append(parentA.methodA()).append("-");
         }
         
-        // Проверяем доступ к методу класса B
+        // Check access to class B method
         if (parent instanceof ClassB) {
             ClassB parentB = (ClassB) parent;
             result.append(parentB.methodB());

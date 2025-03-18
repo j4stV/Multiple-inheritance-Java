@@ -3,7 +3,7 @@ package inheritance.tests.topological;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс C - зависит от класса A
+ * Class C - depends on class A
  */
 @Mixin(NodeA.class)
 public class NodeC extends TopologicalInterfaceRoot {
@@ -20,7 +20,7 @@ public class NodeC extends TopologicalInterfaceRoot {
     }
     
     /**
-     * Сбрасывает счетчик порядка посещения узлов
+     * Resets the node visit order counter
      */
     public static void resetVisitOrder() {
         visitOrder = 0;

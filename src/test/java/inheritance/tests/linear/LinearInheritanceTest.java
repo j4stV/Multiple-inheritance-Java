@@ -10,40 +10,40 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Тест для проверки линейного наследования (A -> B -> C)
+ * Test for checking linear inheritance (A -> B -> C)
  */
 public class LinearInheritanceTest {
     
     @Before
     public void setUp() {
-        // Отключаем вывод отладочной информации
+        // Disable debug output
         MixinFactory.setDebugEnabled(false);
-        // Очищаем кэш инстансов перед тестом
+        // Clear instance cache before test
         MixinFactory.clearCache();
     }
     
     @After
     public void tearDown() {
-        // Удаляем сгенерированные файлы после тестов
+        // Delete generated files after tests
         cleanupGeneratedFiles();
     }
     
     @Test
     public void testLinearInheritance() {
-        // Создаем экземпляр класса C с использованием фабрики миксинов
+        // Create an instance of class C using mixin factory
         ClassC instanceC = MixinFactory.createInstance(ClassC.class);
         
-        // Проверяем результат вызова метода testMethod
-        // Ожидаем "CBA" - результат вызова методов по цепочке C -> B -> A
+        // Check the result of calling testMethod
+        // Expect "CBA" - result of calling methods through chain C -> B -> A
         String result = instanceC.testMethod();
         assertEquals("CBA", result);
     }
     
     /**
-     * Удаление сгенерированных файлов
+     * Delete generated files
      */
     private void cleanupGeneratedFiles() {
-        // Удаляем сгенерированные файлы с расширением .class
+        // Delete generated files with .class extension
         File generatedDir = new File("generated");
         if (generatedDir.exists() && generatedDir.isDirectory()) {
             File[] files = generatedDir.listFiles();

@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Аннотация, которая помечает интерфейс как корневой 
- * в иерархии множественного наследования
+ * Annotation that marks an interface as the root 
+ * in multiple inheritance hierarchy
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)

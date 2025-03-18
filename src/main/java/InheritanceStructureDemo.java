@@ -2,7 +2,7 @@ import example.diamond.*;
 import inheritance.factory.MixinFactory;
 
 /**
- * Демонстрация структуры наследования в проекте
+ * Demonstration of the inheritance structure in the project
  */
 public class InheritanceStructureDemo {
     
@@ -16,32 +16,32 @@ public class InheritanceStructureDemo {
             }
         }
         
-        System.out.println("=== Демонстрация структуры наследования ===");
+        System.out.println("=== Inheritance Structure Demonstration ===");
         
-        // Создаем экземпляр класса F
+        // Create an instance of class F
         F f = MixinFactory.createInstance(F.class);
         
-        // Выводим структуру наследования
-        System.out.println("\n=== Структура наследования класса F ===");
+        // Print the inheritance structure
+        System.out.println("\n=== Inheritance Structure of Class F ===");
         printInheritanceStructure(f);
         
-        System.out.println("\n=== Демонстрация завершена ===");
+        System.out.println("\n=== Demonstration Completed ===");
     }
     
     /**
-     * Выводит структуру наследования для объекта
+     * Prints the inheritance structure for an object
      */
     private static void printInheritanceStructure(Object obj) {
         if (obj == null) {
-            System.out.println("Объект равен null");
+            System.out.println("Object is null");
             return;
         }
         
         Class<?> clazz = obj.getClass();
-        System.out.println("Класс: " + clazz.getSimpleName());
+        System.out.println("Class: " + clazz.getSimpleName());
         
         try {
-            // Получаем поле parent
+            // Get the parent field
             java.lang.reflect.Field parentField = null;
             Class<?> currentClass = clazz;
             
@@ -57,31 +57,42 @@ public class InheritanceStructureDemo {
                 parentField.setAccessible(true);
                 Object parent = parentField.get(obj);
                 
+                System.out.println("  ├── Parent: " + (parent != null ? parent.getClass().getSimpleName() : "null"));
+                
                 if (parent != null) {
-                    System.out.println("└── Родитель: " + parent.getClass().getSimpleName());
-                    printParentChain(parent, "    ");
-                } else {
-                    System.out.println("└── Нет родителя");
+                    printParentChain(parent, "  │   ");
                 }
             } else {
-                System.out.println("└── Поле parent не найдено");
+                System.out.println("  ├── No parent field found");
+            }
+            
+            // Print implemented interfaces
+            Class<?>[] interfaces = clazz.getInterfaces();
+            if (interfaces.length > 0) {
+                System.out.println("  └── Implements interfaces:");
+                for (int i = 0; i < interfaces.length; i++) {
+                    boolean isLast = (i == interfaces.length - 1);
+                    System.out.println("      " + (isLast ? "└── " : "├── ") + interfaces[i].getSimpleName());
+                }
             }
         } catch (Exception e) {
-            System.out.println("Ошибка при получении структуры наследования: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("  └── Error getting parent: " + e.getMessage());
         }
     }
     
     /**
-     * Рекурсивно выводит цепочку родителей
+     * Recursively prints the parent chain
      */
     private static void printParentChain(Object obj, String indent) {
-        if (obj == null) return;
+        if (obj == null) {
+            return;
+        }
         
         try {
-            // Получаем поле parent
+            // Get the parent field
             java.lang.reflect.Field parentField = null;
-            Class<?> currentClass = obj.getClass();
+            Class<?> clazz = obj.getClass();
+            Class<?> currentClass = clazz;
             
             while (currentClass != null && parentField == null) {
                 try {
@@ -95,13 +106,24 @@ public class InheritanceStructureDemo {
                 parentField.setAccessible(true);
                 Object parent = parentField.get(obj);
                 
+                System.out.println(indent + "├── Parent: " + (parent != null ? parent.getClass().getSimpleName() : "null"));
+                
                 if (parent != null) {
-                    System.out.println(indent + "└── " + parent.getClass().getSimpleName());
-                    printParentChain(parent, indent + "    ");
+                    printParentChain(parent, indent + "│   ");
+                }
+            }
+            
+            // Print implemented interfaces
+            Class<?>[] interfaces = obj.getClass().getInterfaces();
+            if (interfaces.length > 0) {
+                System.out.println(indent + "└── Implements interfaces:");
+                for (int i = 0; i < interfaces.length; i++) {
+                    boolean isLast = (i == interfaces.length - 1);
+                    System.out.println(indent + "    " + (isLast ? "└── " : "├── ") + interfaces[i].getSimpleName());
                 }
             }
         } catch (Exception e) {
-            System.out.println(indent + "Ошибка: " + e.getMessage());
+            System.out.println(indent + "└── Error: " + e.getMessage());
         }
     }
 } 

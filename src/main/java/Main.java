@@ -2,44 +2,44 @@ import example.diamond.*;
 import inheritance.factory.MixinFactory;
 
 /**
- * Главный класс для демонстрации работы механизма ромбовидного наследования
+ * Main class for demonstrating the diamond inheritance mechanism
  */
 public class Main {
 
     /**
-     * Точка входа в программу
+     * Program entry point
      *
-     * @param args аргументы командной строки
-     *             Поддерживаемые аргументы:
-     *             --debug=true|false - включение/отключение отладочной информации
+     * @param args command line arguments
+     *             Supported arguments:
+     *             --debug=true|false - enable/disable debug information
      */
     public static void main(String[] args) {
-        System.out.println("=== Демонстрация механизма множественного наследования в Java ===");
+        System.out.println("=== Demonstration of multiple inheritance mechanism in Java ===");
 
-        // Обработка аргументов командной строки
+        // Process command line arguments
         processArgs(args);
         MixinFactory.setDebugEnabled(true);
         try {
-            // Запускаем тест ромбовидного наследования
+            // Run diamond inheritance test
             DiamondTest.runTest();
 
-            // Создаем и тестируем отдельный экземпляр D
-            System.out.println("\n=== Дополнительная демонстрация работы класса D ===");
+            // Create and test a separate instance of D
+            System.out.println("\n=== Additional demonstration of class D ===");
             D d = SomeInterfaceRoot.createInstance(D.class);
             d.method();
 
         } catch (Exception e) {
-            System.err.println("Ошибка во время выполнения: " + e.getMessage());
+            System.err.println("Error during execution: " + e.getMessage());
             e.printStackTrace();
         }
 
-        System.out.println("\n=== Демонстрация завершена ===");
+        System.out.println("\n=== Demonstration completed ===");
     }
 
     /**
-     * Обрабатывает аргументы командной строки
+     * Process command line arguments
      *
-     * @param args массив аргументов
+     * @param args array of arguments
      */
     private static void processArgs(String[] args) {
         if (args == null || args.length == 0) {
@@ -51,7 +51,7 @@ public class Main {
                 String value = arg.substring("--debug=".length());
                 boolean debug = Boolean.parseBoolean(value);
                 MixinFactory.setDebugEnabled(debug);
-                System.out.println("Отладочная информация " + (debug ? "включена" : "отключена"));
+                System.out.println("Debug information " + (debug ? "enabled" : "disabled"));
             }
         }
     }

@@ -10,52 +10,53 @@ repositories {
 }
 
 dependencies {
-    implementation(files("bin")) // Подключаем скомпилированные классы
-    annotationProcessor(files("bin")) // Указываем путь к скомпилированному процессору аннотаций
+    implementation(files("bin")) // Connect compiled classes
+    annotationProcessor(files("bin")) // Specify path to compiled annotation processor
 }
 
 
-// Задача для компиляции аннотаций (Root.java, Mixin.java)
+// Task for compiling annotations (Root.java, Mixin.java)
 tasks.register<JavaCompile>("compileAnnotations") {
     source = fileTree("src/main/java/inheritance/annotations")
     destinationDirectory.set(file("bin"))
     classpath = files()
 }
 
-// Задача для компиляции процессора аннотаций (RootProcessor.java)
+// Task for compiling annotation processor (RootProcessor.java)
 tasks.register<JavaCompile>("compileProcessor") {
     source = fileTree("src/main/java/inheritance/processor")
     destinationDirectory.set(file("bin"))
-    classpath = files("bin") // Используем скомпилированные аннотации
-    dependsOn("compileAnnotations") // Указываем зависимость от compileAnnotations
+    classpath = files("bin") // Use compiled annotations
+    dependsOn("compileAnnotations") // Specify dependency on compileAnnotations
 }
 
-// Основная задача компиляции с использованием процессора
+// Main compilation task using processor
 tasks.register<JavaCompile>("compileMain") {
     source = fileTree("src/main/java")
     destinationDirectory.set(file("bin"))
-    classpath = files("bin") // Путь к скомпилированным файлам
-    dependsOn("compileAnnotations", "compileProcessor") // Сначала компилируем аннотации и процессор
-    options.annotationProcessorPath = files("bin") // Путь к скомпилированному процессору
+    classpath = files("bin") // Path to compiled files
+    dependsOn("compileAnnotations", "compileProcessor") // First compile annotations and processor
+    options.annotationProcessorPath = files("bin") // Path to compiled processor
     options.compilerArgs.add("-processor")
-    options.compilerArgs.add("inheritance.processor.RootProcessor") // Указываем процессор
+    options.compilerArgs.add("inheritance.processor.RootProcessor") // Specify processor
 }
 
-// Задача для создания META-INF/сервисов
+// Task for creating META-INF/services
 tasks.register<Copy>("copyServices") {
-    from("src/META-INF/services/") // Путь к сервисам
+    from("src/META-INF/services/") // Path to services
     into("bin/META-INF/services/")
 }
 
-// Задача для сборки и копирования сервисов перед запуском
+// Task for building and copying services before running
 tasks.register("buildAndRun") {
-    dependsOn("copyServices", "compileMain")
+    dependsOn("compileMain", "copyServices")
 }
 
-// Задача для запуска приложения
-tasks.register<JavaExec>("run") {
-    dependsOn("buildAndRun") // Убедитесь, что задача сборки выполнена перед запуском
-    mainClass.set("Main") // Указываем основной класс
-    classpath = files("bin") // Указываем classpath, чтобы использовать скомпилированные файлы в bin
+// Cleaning task
+tasks.register<Delete>("cleanAll") {
+    delete("bin")
 }
+
+// Default task
+defaultTasks("buildAndRun")
 

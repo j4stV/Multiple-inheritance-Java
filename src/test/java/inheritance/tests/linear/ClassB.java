@@ -3,19 +3,19 @@ package inheritance.tests.linear;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс B для линейного наследования
- * Наследуется от класса A через аннотацию @Mixin
+ * Class B for linear inheritance
+ * Inherits from class A through @Mixin annotation
  */
 @Mixin(ClassA.class)
 public class ClassB extends TestLinearInterfaceRoot {
     /**
-     * Реализация метода из интерфейса
-     * @return "B" + результат вызова метода из родительского класса
+     * Implementation of method from interface
+     * @return "B" + result of calling method from parent class
      */
     public String testMethod() {
-        System.out.println("B.testMethod(): начало выполнения");
+        System.out.println("B.testMethod(): execution start");
         String result = "B" + nextTestMethod();
-        System.out.println("B.testMethod(): конец выполнения");
+        System.out.println("B.testMethod(): execution end");
         return result;
     }
 } 

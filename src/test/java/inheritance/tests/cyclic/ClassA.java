@@ -3,40 +3,40 @@ package inheritance.tests.cyclic;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс A для циклического наследования
- * Создает циклическую структуру с классами B и C
- * Наследуется от класса C через аннотацию @Mixin
+ * Class A for cyclic inheritance
+ * Creates cyclic structure with classes B and C
+ * Inherits from class C through @Mixin annotation
  */
 @Mixin(ClassC.class)
 public class ClassA extends CyclicInterfaceRoot {
     private int callCounter = 0;
     
     /**
-     * Реализация метода из интерфейса
-     * @return "A" + результат вызова метода из родительского класса
+     * Implementation of method from interface
+     * @return "A" + result of calling method from parent class
      */
     public String testMethod() {
         callCounter++;
         
-        // Ограничиваем количество вызовов для предотвращения бесконечного цикла
+        // Limit the number of calls to prevent infinite loop
         if (callCounter > 3) {
             return "A(stop)";
         }
         
-        System.out.println("A.testMethod(): выполнение [" + callCounter + "]");
+        System.out.println("A.testMethod(): execution [" + callCounter + "]");
         return "A" + nextTestMethod();
     }
     
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;
     }
     
     /**
-     * Сбрасывает счетчик вызовов для повторных тестов
+     * Resets call counter for repeated tests
      */
     public void resetCallCounter() {
         callCounter = 0;

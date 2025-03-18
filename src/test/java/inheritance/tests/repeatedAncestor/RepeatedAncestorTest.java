@@ -11,61 +11,61 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Тест для проверки наследования с повторяющимся предком
- * Структура наследования: D extends A,B; B extends A
- * Проверяет правильность построения цепочки наследования
- * и доступ к методам при наличии повторяющегося предка
+ * Test for checking inheritance with a repeated ancestor
+ * Inheritance structure: D extends A,B; B extends A
+ * Verifies the correct construction of the inheritance chain
+ * and access to methods when there is a repeated ancestor
  */
 public class RepeatedAncestorTest {
     
     @Before
     public void setUp() {
-        // Отключаем вывод отладочной информации
+        // Disable debug output
         MixinFactory.setDebugEnabled(false);
-        // Очищаем кэш инстансов перед тестом
+        // Clear instance cache before test
         MixinFactory.clearCache();
     }
     
     @After
     public void tearDown() {
-        // Удаляем сгенерированные файлы после тестов
+        // Delete generated files after tests
         cleanupGeneratedFiles();
     }
     
     @Test
     public void testRepeatedAncestorInheritance() {
-        // Создаем экземпляр класса D с использованием фабрики миксинов
+        // Create an instance of class D using mixin factory
         ClassD instanceD = MixinFactory.createInstance(ClassD.class);
         
-        // Проверяем результат вызова метода testMethod
-        // Ожидаем "DBA" - порядок вызовов должен идти D -> B -> A
-        // A не должен вызываться дважды, даже если он является предком и для D, и для B
+        // Check the result of calling testMethod
+        // Expect "DBA" - call order should be D -> B -> A
+        // A should not be called twice, even if it is an ancestor for both D and B
         String result = instanceD.testMethod();
         assertEquals("DBA", result);
         
-        // Проверяем доступность специфических методов родительских классов
+        // Check availability of parent classes' specific methods
         String specificResult = instanceD.callParentSpecificMethods();
         
-        // Проверяем, что метод возвращает корректную строку
-        // В зависимости от того, кто является непосредственным родителем D
+        // Check that the method returns the correct string
+        // Depending on who is the direct parent of D
         if (instanceD.parent instanceof ClassA) {
             assertEquals("A-specific", specificResult);
         } else if (instanceD.parent instanceof ClassB) {
             assertTrue(specificResult.contains("B-specific"));
-            // Если родитель B, то через него мы также имеем доступ к методам A
-            // Но нас больше интересует только непосредственный родитель
+            // If the parent is B, then through it we also have access to A's methods
+            // But we are more interested in the direct parent only
         }
         
-        // Проверяем, что у D есть доступ к обоим родительским классам
-        assertTrue("Должен быть доступ к методам класса A через иерархию",
+        // Check that D has access to both parent classes
+        assertTrue("Should have access to class A methods through hierarchy",
                 specificResult.contains("A-specific") || (instanceD.parent instanceof ClassB));
     }
     
     /**
-     * Удаление сгенерированных файлов
+     * Delete generated files
      */
     private void cleanupGeneratedFiles() {
-        // Удаляем сгенерированные файлы с расширением .class
+        // Delete generated files with .class extension
         File generatedDir = new File("generated");
         if (generatedDir.exists() && generatedDir.isDirectory()) {
             File[] files = generatedDir.listFiles();

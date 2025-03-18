@@ -1,87 +1,87 @@
 #!/bin/bash
-echo "=== Скрипт компиляции проекта ромбовидного наследования ==="
+echo "=== Diamond inheritance project compilation script ==="
 
-# Очищаем директорию bin и создаем её заново
+# Clean bin directory and create it again
 if [ -d bin ]; then
   rm -rf bin
 fi
 mkdir -p bin/META-INF/services
 
-# Компилируем аннотации
-echo "Компиляция аннотаций..."
+# Compile annotations
+echo "Compiling annotations..."
 javac -d bin src/main/java/inheritance/annotations/*.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции аннотаций"
+  echo "Error compiling annotations"
   exit 1
 fi
 
-# Компилируем процессор аннотаций
-echo "Компиляция процессора аннотаций..."
+# Compile annotation processor
+echo "Compiling annotation processor..."
 javac -d bin -cp bin src/main/java/inheritance/processor/*.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции процессора аннотаций"
+  echo "Error compiling annotation processor"
   exit 1
 fi
 
-# Создаем файл службы для процессора аннотаций
+# Create service file for annotation processor
 echo "inheritance.processor.RootProcessor" > bin/META-INF/services/javax.annotation.processing.Processor
 
-# Компилируем фабрику
-echo "Компиляция фабрики..."
+# Compile factory
+echo "Compiling factory..."
 javac -d bin -cp bin src/main/java/inheritance/factory/*.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции фабрики"
+  echo "Error compiling factory"
   exit 1
 fi
 
-# Компилируем корневой интерфейс
-echo "Компиляция корневого интерфейса..."
+# Compile root interface
+echo "Compiling root interface..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/SomeInterface.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции SomeInterface"
+  echo "Error compiling SomeInterface"
   exit 1
 fi
 
-# Компилируем класс A
-echo "Компиляция класса A..."
+# Compile class A
+echo "Compiling class A..."
 javac -d bin -cp bin src/main/java/example/diamond/A.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции класса A"
+  echo "Error compiling class A"
   exit 1
 fi
 
-# Компилируем классы B и C
-echo "Компиляция классов B и C..."
+# Compile classes B and C
+echo "Compiling classes B and C..."
 javac -d bin -cp bin src/main/java/example/diamond/B.java src/main/java/example/diamond/C.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции классов B и C"
+  echo "Error compiling classes B and C"
   exit 1
 fi
 
-# Компилируем класс D
-echo "Компиляция класса D..."
+# Compile class D
+echo "Compiling class D..."
 javac -d bin -cp bin src/main/java/example/diamond/D.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции класса D"
+  echo "Error compiling class D"
   exit 1
 fi
 
-# Компилируем тестовый класс
-echo "Компиляция тестового класса..."
+# Compile test class
+echo "Compiling test class..."
 javac -d bin -cp bin src/main/java/example/diamond/DiamondTest.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции тестового класса"
+  echo "Error compiling test class"
   exit 1
 fi
 
-# Компилируем основной класс
-echo "Компиляция Main класса..."
+# Compile main class
+echo "Compiling Main class..."
 javac -d bin -cp bin src/main/java/Main.java
 if [ $? -ne 0 ]; then
-  echo "Ошибка при компиляции Main класса"
+  echo "Error compiling Main class"
   exit 1
 fi
 
-echo "Компиляция успешно завершена!"
-echo "Выполните 'java -cp bin Main' для запуска программы"
-echo "Или выполните 'java -cp bin example.diamond.DiamondTest' для запуска теста" 
+echo "Compilation successful!"
+echo "Run 'java -cp bin Main' to start the program"
+echo "Or run 'java -cp bin example.diamond.DiamondTest' to start the test" 

@@ -3,7 +3,7 @@ package inheritance.tests.topological;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс F - зависит от классов C и E, образуя сложный граф наследования
+ * Class F - depends on classes C and E, forming a complex inheritance graph
  */
 @Mixin({NodeC.class, NodeE.class})
 public class NodeF extends TopologicalInterfaceRoot {
@@ -20,7 +20,7 @@ public class NodeF extends TopologicalInterfaceRoot {
     }
     
     /**
-     * Сбрасывает счетчик порядка посещения узлов
+     * Resets the node visit order counter
      */
     public static void resetVisitOrder() {
         visitOrder = 0;

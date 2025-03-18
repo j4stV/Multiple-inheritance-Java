@@ -8,80 +8,74 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Фабрика для создания экземпляров классов с множественным наследованием.
- * Использует алгоритм топологической сортировки для определения порядка
- * создания инстансов и установки связей между ними.
+ * Factory for creating instances of classes with multiple inheritance.
+ * Uses a topological sorting algorithm to determine the order of
+ * instance creation and establishing connections between them.
  */
 public class MixinFactory {
     
     private static final Map<Class<?>, Object> instanceCache = new HashMap<>();
-    private static boolean debugEnabled = true;  // Флаг для включения/отключения отладочной информации
+    private static boolean debugEnabled = true;
     
     /**
-     * Включает или выключает вывод отладочной информации
-     * @param enabled true для включения, false для отключения
+     * Enables or disables debug output
+     * @param enabled true to enable, false to disable
      */
     public static void setDebugEnabled(boolean enabled) {
         debugEnabled = enabled;
     }
     
     /**
-     * Создает экземпляр класса с множественным наследованием
+     * Creates an instance of a class with multiple inheritance
      * 
-     * @param clazz Класс для создания экземпляра
-     * @param <T> Тип создаваемого экземпляра
-     * @return Настроенный экземпляр класса
+     * @param clazz Class to instantiate
+     * @param <T> Type of instance to create
+     * @return Configured class instance
      */
     public static <T> T createInstance(Class<T> clazz) {
         if (debugEnabled) {
-            System.out.println("\n=== Создание экземпляра класса с множественным наследованием ===");
-            System.out.println("Целевой класс: " + clazz.getName());
+            System.out.println("\n=== Creating instance of class with multiple inheritance ===");
+            System.out.println("Target class: " + clazz.getName());
         }
         
-        // Очищаем кэш для нового создания
         instanceCache.clear();
         
-        // Строим граф наследования
         Map<Class<?>, List<Class<?>>> inheritanceGraph = buildInheritanceGraph(clazz);
         
         if (debugEnabled) {
-            System.out.println("\n=== Граф наследования ===");
+            System.out.println("\n=== Inheritance graph ===");
             for (Map.Entry<Class<?>, List<Class<?>>> entry : inheritanceGraph.entrySet()) {
-                System.out.println(entry.getKey().getSimpleName() + " наследуется от: " + 
+                System.out.println(entry.getKey().getSimpleName() + " inherits from: " + 
                     entry.getValue().stream()
                         .map(Class::getSimpleName)
                         .reduce((a, b) -> a + ", " + b)
-                        .orElse("<нет родителей>"));
+                        .orElse("<no parents>"));
             }
         }
         
-        // Выполняем топологическую сортировку
         List<Class<?>> sortedClasses = topologicalSort(inheritanceGraph);
         
         if (debugEnabled) {
-            System.out.println("\n=== Результат топологической сортировки ===");
-            System.out.println("Порядок создания и линковки классов (от начального к конечным):");
+            System.out.println("\n=== Topological sort result ===");
+            System.out.println("Order of class creation and linking (from initial to final):");
             for (int i = 0; i < sortedClasses.size(); i++) {
                 System.out.println((i + 1) + ". " + sortedClasses.get(i).getSimpleName());
             }
         }
         
-        // Создаем экземпляры в порядке топологической сортировки
         createInstances(sortedClasses);
         
-        // Устанавливаем связи между экземплярами в порядке топологической сортировки
         setupParentRelationships(sortedClasses);
         
-        // Возвращаем созданный экземпляр запрашиваемого класса
         return (T) instanceCache.get(clazz);
     }
     
     /**
-     * Строит граф наследования, начиная с указанного класса.
-     * Для каждого класса определяется список его родителей из аннотации @Mixin.
+     * Builds an inheritance graph starting from the specified class.
+     * For each class, determines the list of its parents from the @Mixin annotation.
      * 
-     * @param startClass Начальный класс для построения графа
-     * @return Граф наследования, где ключ - класс, значение - список его родителей
+     * @param startClass Initial class for building the graph
+     * @return Inheritance graph where key is the class, value is a list of its parents
      */
     private static Map<Class<?>, List<Class<?>>> buildInheritanceGraph(Class<?> startClass) {
         Map<Class<?>, List<Class<?>>> graph = new HashMap<>();
@@ -94,18 +88,14 @@ public class MixinFactory {
         while (!queue.isEmpty()) {
             Class<?> currentClass = queue.poll();
             
-            // Проверяем, что класс не интерфейс и не абстрактный
             if (currentClass.isInterface() || Modifier.isAbstract(currentClass.getModifiers())) {
                 continue;
             }
             
-            // Получаем родителей из аннотации @Mixin
             List<Class<?>> parents = getMixinClasses(currentClass);
             
-            // Добавляем класс и его родителей в граф
             graph.put(currentClass, parents);
             
-            // Добавляем родителей в очередь для обработки
             for (Class<?> parent : parents) {
                 if (!visited.contains(parent) && !parent.isInterface() && !Modifier.isAbstract(parent.getModifiers())) {
                     queue.add(parent);
@@ -118,11 +108,11 @@ public class MixinFactory {
     }
     
     /**
-     * Выполняет топологическую сортировку графа наследования.
-     * Гарантирует, что родители будут располагаться в списке после своих потомков.
+     * Performs topological sorting of the inheritance graph.
+     * Ensures that parents will be placed in the list after their descendants.
      * 
-     * @param graph Граф наследования
-     * @return Отсортированный список классов
+     * @param graph Inheritance graph
+     * @return Sorted list of classes
      */
     private static List<Class<?>> topologicalSort(Map<Class<?>, List<Class<?>>> graph) {
         List<Class<?>> result = new ArrayList<>();
@@ -139,12 +129,12 @@ public class MixinFactory {
     }
     
     /**
-     * Вспомогательный метод для обхода в глубину при топологической сортировке.
+     * Helper method for depth-first search during topological sorting.
      */
     private static void dfs(Class<?> current, Map<Class<?>, List<Class<?>>> graph, Set<Class<?>> visited, 
                             Set<Class<?>> processing, List<Class<?>> result) {
         if (processing.contains(current)) {
-            throw new RuntimeException("Обнаружена циклическая зависимость в наследовании: " + current.getName());
+            throw new RuntimeException("Cyclic dependency detected in inheritance: " + current.getName());
         }
         
         if (visited.contains(current)) {
@@ -153,7 +143,6 @@ public class MixinFactory {
         
         processing.add(current);
         
-        // Обрабатываем родителей
         List<Class<?>> parents = graph.getOrDefault(current, Collections.emptyList());
         for (Class<?> parent : parents) {
             if (!parent.isInterface() && !Modifier.isAbstract(parent.getModifiers()) && !visited.contains(parent)) {
@@ -167,56 +156,49 @@ public class MixinFactory {
     }
     
     /**
-     * Создает экземпляры всех классов в порядке топологической сортировки.
+     * Creates instances of all classes in topological sort order.
      * 
-     * @param sortedClasses Отсортированный список классов
+     * @param sortedClasses Sorted list of classes
      */
     private static void createInstances(List<Class<?>> sortedClasses) {
         for (Class<?> clazz : sortedClasses) {
             try {
-                // Пропускаем интерфейсы и абстрактные классы
                 if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
                     continue;
                 }
                 
-                // Создаем экземпляр
                 Constructor<?> constructor = clazz.getDeclaredConstructor();
                 constructor.setAccessible(true);
                 Object instance = constructor.newInstance();
                 
-                // Добавляем в кэш
                 instanceCache.put(clazz, instance);
                 
                 if (debugEnabled) {
-                    System.out.println("Создан экземпляр класса: " + clazz.getSimpleName());
+                    System.out.println("Created instance of class: " + clazz.getSimpleName());
                 }
                 
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException("Ошибка при создании экземпляра класса: " + clazz.getName(), e);
+                throw new RuntimeException("Error creating instance of class: " + clazz.getName(), e);
             }
         }
     }
     
     /**
-     * Устанавливает связи parent между созданными экземплярами в соответствии с результатом
-     * топологической сортировки, создавая цепочку инстансов в порядке их создания.
+     * Sets up parent relationships between created instances according to the result of
+     * topological sorting, creating a chain of instances in the order they were created.
      * 
-     * @param sortedClasses Отсортированный список классов
+     * @param sortedClasses Sorted list of classes
      */
     private static void setupParentRelationships(List<Class<?>> sortedClasses) {
         if (debugEnabled) {
-            System.out.println("\n=== Итоговый порядок наследования ===");
-            System.out.println("(Классы связываются в порядке топологической сортировки)");
+            System.out.println("\n=== Final inheritance order ===");
+            System.out.println("(Classes are linked in topological sort order)");
         }
-        
-        // Устанавливаем связи в обратном порядке (от последнего к первому в списке сортировки)
-        // Это создаст цепочку F -> D -> E -> C -> B -> A
         
         if (sortedClasses.size() <= 1) {
-            return; // Нечего связывать, если только один класс
+            return;
         }
         
-        // Перебираем классы от последнего к первому (кроме первого, так как ему не с чем связываться)
         for (int i = sortedClasses.size() - 1; i > 0; i--) {
             Class<?> currentClass = sortedClasses.get(i);
             Class<?> parentClass = sortedClasses.get(i - 1);
@@ -235,26 +217,26 @@ public class MixinFactory {
                     parentField.set(currentInstance, parentInstance);
                     
                     if (debugEnabled) {
-                        System.out.println("Установлена связь: " + currentClass.getSimpleName() + 
+                        System.out.println("Established connection: " + currentClass.getSimpleName() + 
                                 " -> " + parentClass.getSimpleName());
                     }
                 }
             } catch (ReflectiveOperationException e) {
-                throw new RuntimeException("Ошибка при установке родительского поля для " + currentClass.getName(), e);
+                throw new RuntimeException("Error setting parent field for " + currentClass.getName(), e);
             }
         }
         
         if (debugEnabled) {
-            System.out.println("\n=== Структура наследования построена успешно ===");
+            System.out.println("\n=== Inheritance structure built successfully ===");
         }
     }
     
     /**
-     * Находит поле с заданным именем, включая поля в родительских классах
+     * Finds a field with the given name, including fields in parent classes
      * 
-     * @param clazz Класс для поиска
-     * @param fieldName Имя поля
-     * @return Найденное поле или null
+     * @param clazz Class to search
+     * @param fieldName Field name
+     * @return Found field or null
      */
     private static Field findField(Class<?> clazz, String fieldName) {
         while (clazz != null) {
@@ -268,10 +250,10 @@ public class MixinFactory {
     }
     
     /**
-     * Возвращает список классов, указанных в аннотациях @Mixin
+     * Returns a list of classes specified in @Mixin annotations
      * 
-     * @param clazz Класс для анализа
-     * @return Список классов-миксинов
+     * @param clazz Class to analyze
+     * @return List of mixin classes
      */
     private static List<Class<?>> getMixinClasses(Class<?> clazz) {
         List<Class<?>> mixinClasses = new ArrayList<>();
@@ -279,7 +261,6 @@ public class MixinFactory {
         
         if (mixins != null) {
             for (Mixin mixin : mixins) {
-                // Добавляем все классы из массива value()
                 for (Class<?> mixinClass : mixin.value()) {
                     mixinClasses.add(mixinClass);
                 }
@@ -290,7 +271,7 @@ public class MixinFactory {
     }
     
     /**
-     * Очищает кэш инстансов.
+     * Clears the instance cache.
      */
     public static void clearCache() {
         instanceCache.clear();

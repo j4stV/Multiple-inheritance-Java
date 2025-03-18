@@ -1,13 +1,13 @@
 package example.diamond;
 
 /**
- * Тестовый класс для проверки ромбовидного наследования
+ * Test class for checking diamond inheritance
  */
 public class DiamondTest {
     
     /**
-     * Точка входа для прямого запуска теста
-     * @param args аргументы командной строки
+     * Entry point for direct test execution
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         System.out.println("DiamondTest main method executing...");
@@ -16,29 +16,29 @@ public class DiamondTest {
     }
     
     /**
-     * Запускает тест ромбовидного наследования
+     * Runs the diamond inheritance test
      */
     public static void runTest() {
-        System.out.println("=== Запуск теста ромбовидного наследования ===");
+        System.out.println("=== Starting diamond inheritance test ===");
         
         try {
-            // Создаем экземпляр класса D через фабрику
+            // Create an instance of class D through the factory
             System.out.println("Creating instance of class D...");
             D d = SomeInterfaceRoot.createInstance(D.class);
             System.out.println("Instance of class D created successfully.");
             
-            // Демонстрация иерархии наследования
+            // Demonstration of inheritance hierarchy
             System.out.println("Showing mixin hierarchy...");
             d.showMixinHierarchy();
             
-            // Демонстрация цепного вызова методов
-            System.out.println("\n=== Демонстрация цепного вызова методов ===");
+            // Demonstration of method chain call
+            System.out.println("\n=== Demonstration of method chain call ===");
             System.out.println("Calling d.method()...");
             d.method();
             
-            // Демонстрация вызова уникальных методов
-            System.out.println("\n=== Демонстрация вызова уникальных методов ===");
-            System.out.println("1. Получаем доступ к классу B через рефлексию:");
+            // Demonstration of unique methods call
+            System.out.println("\n=== Demonstration of unique methods call ===");
+            System.out.println("1. Accessing class B through reflection:");
             try {
                 java.lang.reflect.Field parentField = d.getClass().getSuperclass().getDeclaredField("parent");
                 parentField.setAccessible(true);
@@ -56,7 +56,7 @@ public class DiamondTest {
                 e.printStackTrace();
             }
             
-            System.out.println("\n2. Получаем доступ к классу C через рефлексию:");
+            System.out.println("\n2. Accessing class C through reflection:");
             try {
                 java.lang.reflect.Field firstParentField = d.getClass().getSuperclass().getDeclaredField("parent");
                 firstParentField.setAccessible(true);
@@ -84,6 +84,6 @@ public class DiamondTest {
             e.printStackTrace();
         }
         
-        System.out.println("\n=== Тест ромбовидного наследования завершен ===");
+        System.out.println("\n=== Diamond inheritance test completed ===");
     }
 } 

@@ -1,22 +1,22 @@
 package inheritance.tests.repeatedAncestor;
 
 /**
- * Базовый класс A для теста с повторяющимся предком
- * Реализует интерфейс RepeatedAncestorInterface и служит началом цепочки наследования
+ * Base class A for test with repeated ancestor
+ * Implements RepeatedAncestorInterface and serves as the beginning of inheritance chain
  */
 public class ClassA extends RepeatedAncestorInterfaceRoot {
     /**
-     * Реализация метода из интерфейса
-     * @return "A" - идентификатор класса
+     * Implementation of method from interface
+     * @return "A" - class identifier
      */
     public String testMethod() {
-        System.out.println("A.testMethod(): выполнение");
+        System.out.println("A.testMethod(): execution");
         return "A";
     }
     
     /**
-     * Метод, специфичный для класса A
-     * @return Строка, указывающая на выполнение метода в классе A
+     * Method specific to class A
+     * @return String indicating execution of method in class A
      */
     public String methodA() {
         return "A-specific";

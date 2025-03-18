@@ -3,82 +3,82 @@ package example.diamond;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс D демонстрирует ромбовидное наследование, объединяя классы B и C
+ * Class D demonstrates diamond inheritance by combining classes B and C
  */
 @Mixin({B.class, C.class, E.class})
 public class D extends SomeInterfaceRoot {
 
     @Override
     public void method() {
-        System.out.println("D.method(): Начало выполнения");
+        System.out.println("D.method(): Execution start");
 
-        // Вызываем метод через цепочку наследования
+        // Call method through inheritance chain
         nextMethod();
 
-        System.out.println("D.method(): Конец выполнения");
+        System.out.println("D.method(): Execution end");
     }
 
     /**
-     * Уникальный метод класса D
+     * Unique method of class D
      */
     public void methodD() {
-        System.out.println("D.methodD(): Уникальный метод класса D");
+        System.out.println("D.methodD(): Unique method of class D");
         
-        // Вызываем метод родительского класса (B)
+        // Call parent class method (B)
         if (parent != null) {
-            System.out.println("D.methodD(): Вызываем методы доступных родителей:");
+            System.out.println("D.methodD(): Calling methods of available parents:");
             
             try {
-                System.out.println("  Пытаемся вызвать methodB() у родителя " + 
+                System.out.println("  Trying to call methodB() on parent " + 
                     parent.getClass().getSimpleName());
                 if (parent instanceof B) {
                     ((B)parent).methodB();
                 } else {
-                    System.out.println("  Родитель не является экземпляром класса B");
+                    System.out.println("  Parent is not an instance of class B");
                 }
             } catch (Exception e) {
-                System.out.println("  Ошибка при вызове methodB(): " + e.getMessage());
+                System.out.println("  Error calling methodB(): " + e.getMessage());
             }
             
             try {
-                System.out.println("  Пытаемся вызвать methodC() у родителя " + 
+                System.out.println("  Trying to call methodC() on parent " + 
                     parent.getClass().getSimpleName());
                 if (parent instanceof C) {
                     ((C)parent).methodC();
                 } else {
-                    System.out.println("  Родитель не является экземпляром класса C");
+                    System.out.println("  Parent is not an instance of class C");
                 }
             } catch (Exception e) {
-                System.out.println("  Ошибка при вызове methodC(): " + e.getMessage());
+                System.out.println("  Error calling methodC(): " + e.getMessage());
             }
             
             try {
-                System.out.println("  Пытаемся вызвать methodE() у родителя " + 
+                System.out.println("  Trying to call methodE() on parent " + 
                     parent.getClass().getSimpleName());
                 if (parent instanceof E) {
                     ((E)parent).methodE();
                 } else {
-                    System.out.println("  Родитель не является экземпляром класса E");
+                    System.out.println("  Parent is not an instance of class E");
                 }
             } catch (Exception e) {
-                System.out.println("  Ошибка при вызове methodE(): " + e.getMessage());
+                System.out.println("  Error calling methodE(): " + e.getMessage());
             }
         }
     }
 
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;
     }
 
     /**
-     * Метод для отображения иерархии наследования
+     * Method for displaying inheritance hierarchy
      */
     public void showMixinHierarchy() {
-        System.out.println("\nИерархия наследования для D:");
+        System.out.println("\nInheritance hierarchy for D:");
         System.out.println("D");
 
         if (parent != null) {
@@ -87,10 +87,10 @@ public class D extends SomeInterfaceRoot {
     }
 
     /**
-     * Рекурсивно отображает родительские классы
+     * Recursively displays parent classes
      *
-     * @param parent Родительский объект для анализа
-     * @param indent Отступ для форматирования вывода
+     * @param parent Parent object to analyze
+     * @param indent Indentation for formatting output
      */
     private void showParentHierarchy(Object parent, String indent) {
         if (parent == null) return;
@@ -105,7 +105,7 @@ public class D extends SomeInterfaceRoot {
                 showParentHierarchy(nextParent, indent + "  ");
             }
         } catch (Exception e) {
-            System.out.println(indent + "Ошибка при получении иерархии: " + e.getMessage());
+            System.out.println(indent + "Error getting hierarchy: " + e.getMessage());
         }
     }
 } 

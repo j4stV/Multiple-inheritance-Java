@@ -3,8 +3,8 @@ import inheritance.annotations.Mixin;
 import inheritance.factory.MixinFactory;
 
 /**
- * Класс для демонстрации вызова методов родительских классов
- * через цепочку наследования.
+ * Class for demonstrating parent class method calls
+ * through the inheritance chain.
  */
 public class MethodInheritanceDemo {
     
@@ -18,162 +18,165 @@ public class MethodInheritanceDemo {
             }
         }
         
-        System.out.println("=== Демонстрация наследования методов ===");
+        System.out.println("=== Method Inheritance Demonstration ===");
         
-        // Создаем экземпляр класса F
+        // Create an instance of class F
         F f = MixinFactory.createInstance(F.class);
         
-        System.out.println("\n=== Тест доступности методов всех родительских классов ===");
+        System.out.println("\n=== Test for accessibility of all parent class methods ===");
         
-        // Вызываем метод из класса F
-        System.out.println("\nМетод F.methodF():");
+        // Call method from class F
+        System.out.println("\nMethod F.methodF():");
         f.methodF();
         
-        // Вызываем метод из класса D (доступен через parent)
-        System.out.println("\nМетод D.methodD():");
+        // Call method from class D (accessible via parent)
+        System.out.println("\nMethod D.methodD():");
         if (f.getParent() instanceof D) {
             ((D)f.getParent()).methodD();
         } else {
-            System.out.println("ERROR: Родитель F не является экземпляром класса D");
+            System.out.println("ERROR: F's parent is not an instance of class D");
         }
         
-        // Вызываем метод класса B (доступен через f -> D -> B)
+        // Call method from class B (accessible via f -> D -> B)
         testMethodAccess(f, "B.methodB()", () -> {
             if (f.getParent() instanceof D) {
                 D d = (D) f.getParent();
                 if (d.getParent() instanceof B) {
                     ((B)d.getParent()).methodB();
                 } else {
-                    System.out.println("ERROR: Родитель D не является экземпляром класса B");
+                    System.out.println("ERROR: D's parent is not an instance of class B");
                 }
             } else {
-                System.out.println("ERROR: D не доступен от F");
+                System.out.println("ERROR: D is not accessible from F");
             }
         });
         
-        // Вызываем метод класса C (доступен через f -> D -> C)
+        // Call method from class C (accessible via f -> D -> C)
         testMethodAccess(f, "C.methodC()", () -> {
             if (f.getParent() instanceof D) {
                 D d = (D) f.getParent();
-                if (d.getParent() instanceof C) {
-                    ((C) d.getParent()).methodC();
-                } else {
-                    System.out.println("ERROR: C не является родителем D");
+                // Try to find C in inheritance chain
+                Object current = d;
+                while (current != null) {
+                    if (current instanceof C) {
+                        ((C)current).methodC();
+                        return;
+                    }
+                    try {
+                        java.lang.reflect.Field parentField = 
+                            getParentField(current.getClass());
+                        if (parentField != null) {
+                            parentField.setAccessible(true);
+                            current = parentField.get(current);
+                        } else {
+                            break;
+                        }
+                    } catch (Exception e) {
+                        System.out.println("ERROR: Could not access parent: " + e.getMessage());
+                        break;
+                    }
                 }
+                System.out.println("ERROR: C is not accessible in inheritance chain starting from D");
             } else {
-                System.out.println("ERROR: D не доступен от F");
+                System.out.println("ERROR: D is not accessible from F");
             }
         });
         
-        // Вызываем метод класса E (доступен через f -> D -> E)
-        testMethodAccess(f, "E.methodE()", () -> {
+        // Call method from class A (accessible via f -> D -> B/C -> A)
+        testMethodAccess(f, "A.methodA()", () -> {
             if (f.getParent() instanceof D) {
                 D d = (D) f.getParent();
-                if (d.getParent() instanceof E) {
-                    ((E) d.getParent()).methodE();
+                if (d.getParent() instanceof B) {
+                    B b = (B) d.getParent();
+                    if (b.getParent() instanceof A) {
+                        ((A)b.getParent()).methodA();
+                    } else {
+                        System.out.println("ERROR: A is not accessible from B");
+                    }
                 } else {
-                    System.out.println("ERROR: E не является родителем D");
+                    System.out.println("ERROR: B is not accessible from D");
                 }
             } else {
-                System.out.println("ERROR: D не доступен от F");
+                System.out.println("ERROR: D is not accessible from F");
             }
         });
         
-        // Вызываем метод класса A (общего предка для всех)
-        testMethodAccess(f, "A.method()", () -> {
-            f.method();
-        });
-        
-        System.out.println("\n=== Проверка иерархии классов ===");
-        
+        System.out.println("\n=== Parent chain for class F ===");
         printParentChain(f);
-        
-        System.out.println("\n=== Демонстрация завершена ===");
     }
     
-    /**
-     * Вспомогательный метод для безопасного вызова методов
-     */
     private static void testMethodAccess(Object obj, String methodName, Runnable methodCall) {
-        System.out.println("\nМетод " + methodName + ":");
+        System.out.println("\nMethod " + methodName + ":");
         try {
             methodCall.run();
         } catch (Exception e) {
-            System.out.println("ERROR: Не удалось вызвать метод: " + e.getMessage());
+            System.out.println("ERROR: Exception when calling " + methodName + ": " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
-    /**
-     * Выводит цепочку родителей для объекта
-     */
     private static void printParentChain(Object obj) {
         if (obj == null) {
+            System.out.println("Object is null");
             return;
         }
         
-        Class<?> clazz = obj.getClass();
-        System.out.println("Объект класса: " + clazz.getSimpleName());
+        System.out.println("Current object: " + obj.getClass().getName());
         
         try {
-            java.lang.reflect.Field parentField = getParentField(clazz);
-            if (parentField != null) {
-                parentField.setAccessible(true);
-                Object parent = parentField.get(obj);
-                
-                System.out.println("  └── Родитель: " + (parent != null ? parent.getClass().getSimpleName() : "null"));
-                
-                if (parent != null) {
-                    printParentChainRecursive(parent, "      ");
-                }
-            } else {
-                System.out.println("  └── (нет поля parent)");
-            }
+            printParentChainRecursive(obj, "    ");
         } catch (Exception e) {
-            System.out.println("  └── Ошибка при получении родителя: " + e.getMessage());
+            System.out.println("Error printing parent chain: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
-    /**
-     * Рекурсивно выводит цепочку родителей
-     */
     private static void printParentChainRecursive(Object obj, String indent) {
         if (obj == null) {
             return;
         }
         
         try {
-            Class<?> clazz = obj.getClass();
-            java.lang.reflect.Field parentField = getParentField(clazz);
-            
+            java.lang.reflect.Field parentField = getParentField(obj.getClass());
             if (parentField != null) {
                 parentField.setAccessible(true);
                 Object parent = parentField.get(obj);
                 
                 if (parent != null) {
-                    System.out.println(indent + "└── Родитель: " + parent.getClass().getSimpleName());
+                    System.out.println(indent + "↓ Parent: " + parent.getClass().getName());
+                    
+                    // Print implemented interfaces
+                    Class<?>[] interfaces = parent.getClass().getInterfaces();
+                    if (interfaces.length > 0) {
+                        System.out.print(indent + "  Interfaces: ");
+                        for (int i = 0; i < interfaces.length; i++) {
+                            System.out.print(interfaces[i].getSimpleName());
+                            if (i < interfaces.length - 1) {
+                                System.out.print(", ");
+                            }
+                        }
+                        System.out.println();
+                    }
+                    
+                    // Continue recursively
                     printParentChainRecursive(parent, indent + "    ");
                 } else {
-                    System.out.println(indent + "└── (нет родительского объекта)");
+                    System.out.println(indent + "↓ End of chain (parent is null)");
                 }
             } else {
-                System.out.println(indent + "└── (нет поля parent)");
+                System.out.println(indent + "↓ End of chain (no parent field)");
             }
         } catch (Exception e) {
-            System.out.println(indent + "└── Ошибка: " + e.getMessage());
+            System.out.println(indent + "Error accessing parent: " + e.getMessage());
         }
     }
     
-    /**
-     * Находит поле parent в классе или его предках
-     */
     private static java.lang.reflect.Field getParentField(Class<?> clazz) {
-        while (clazz != null) {
-            try {
-                return clazz.getDeclaredField("parent");
-            } catch (NoSuchFieldException e) {
-                clazz = clazz.getSuperclass();
-            }
+        try {
+            return clazz.getSuperclass().getDeclaredField("parent");
+        } catch (Exception e) {
+            // No parent field exists
+            return null;
         }
-        return null;
     }
 } 

@@ -1,7 +1,7 @@
 package inheritance.tests.topological;
 
 /**
- * Класс A - корневой узел в графе наследования
+ * Class A - root node in the inheritance graph
  */
 public class NodeA extends TopologicalInterfaceRoot {
     private static int visitOrder = 0;
@@ -17,7 +17,7 @@ public class NodeA extends TopologicalInterfaceRoot {
     }
     
     /**
-     * Сбрасывает счетчик порядка посещения узлов
+     * Resets the node visit order counter
      */
     public static void resetVisitOrder() {
         visitOrder = 0;

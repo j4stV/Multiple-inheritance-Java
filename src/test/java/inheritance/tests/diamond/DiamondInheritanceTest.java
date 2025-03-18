@@ -11,49 +11,49 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Тест для проверки ромбовидного наследования (A -> B,C -> D)
- * Проверяет правильность построения цепочки наследования
- * и доступность методов из разных веток наследования
+ * Test for checking diamond inheritance (A -> B,C -> D)
+ * Verifies the correct construction of the inheritance chain
+ * and accessibility of methods from different inheritance branches
  */
 public class DiamondInheritanceTest {
     
     @Before
     public void setUp() {
-        // Отключаем вывод отладочной информации
+        // Disable debug output
         MixinFactory.setDebugEnabled(false);
-        // Очищаем кэш инстансов перед тестом
+        // Clear instance cache before test
         MixinFactory.clearCache();
     }
     
     @After
     public void tearDown() {
-        // Удаляем сгенерированные файлы после тестов
+        // Delete generated files after tests
         cleanupGeneratedFiles();
     }
     
     @Test
     public void testDiamondInheritance() {
-        // Создаем экземпляр класса D с использованием фабрики миксинов
+        // Create an instance of class D using mixin factory
         ClassD instanceD = MixinFactory.createInstance(ClassD.class);
         
-        // Проверяем результат вызова метода testMethod
-        // Ожидаем "DBCA" в результате топологической сортировки
+        // Check the result of calling testMethod
+        // Expect "DBCA" as a result of topological sorting
         String result = instanceD.testMethod();
         assertEquals("DBCA", result);
         
-        // Проверяем доступность специфических методов B
+        // Check availability of specific methods of B
         String specificResult = instanceD.callParentSpecificMethods();
         assertEquals("B-specific", specificResult);
         
-        // Проверяем родительские связи через instanceof
-        assertTrue("Родитель D должен быть экземпляром B", instanceD.parent instanceof ClassB);
+        // Check parent relationships through instanceof
+        assertTrue("Parent of D should be an instance of B", instanceD.parent instanceof ClassB);
     }
     
     /**
-     * Удаление сгенерированных файлов
+     * Delete generated files
      */
     private void cleanupGeneratedFiles() {
-        // Удаляем сгенерированные файлы с расширением .class
+        // Delete generated files with .class extension
         File generatedDir = new File("generated");
         if (generatedDir.exists() && generatedDir.isDirectory()) {
             File[] files = generatedDir.listFiles();

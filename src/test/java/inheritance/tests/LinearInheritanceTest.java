@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Тест для проверки линейной цепочки наследования (A → B → C)
+ * Test for checking linear inheritance chain (A → B → C)
  */
 public class LinearInheritanceTest {
     
@@ -55,24 +55,24 @@ public class LinearInheritanceTest {
     @Before
     public void setUp() {
         methodCallOrder = new ArrayList<>();
-        MixinFactory.setDebugEnabled(false); // Отключаем отладочный вывод
+        MixinFactory.setDebugEnabled(false); // Disable debug output
     }
 
     @After
     public void tearDown() {
-        // Очищаем сгенерированные файлы
+        // Clean up generated files
         deleteGeneratedFiles();
     }
 
     @Test
     public void testLinearInheritance() {
-        // Создаем экземпляр класса C с линейным наследованием C → B → A
+        // Create an instance of class C with linear inheritance C → B → A
         C c = MixinFactory.createInstance(C.class);
         
-        // Вызываем метод, который должен пройти по цепочке
+        // Call the method that should go through the chain
         c.testMethod();
         
-        // Проверяем порядок вызовов
+        // Check the call order
         assertEquals(3, methodCallOrder.size());
         assertEquals("C", methodCallOrder.get(0));
         assertEquals("B", methodCallOrder.get(1));
@@ -80,7 +80,7 @@ public class LinearInheritanceTest {
     }
 
     /**
-     * Удаляет сгенерированные файлы после выполнения теста
+     * Deletes generated files after test execution
      */
     private void deleteGeneratedFiles() {
         File generatedDir = new File(GENERATED_DIR);
@@ -90,7 +90,7 @@ public class LinearInheritanceTest {
     }
 
     /**
-     * Рекурсивно удаляет директорию и все её содержимое
+     * Recursively deletes a directory and all its contents
      */
     private void deleteDirectory(File directory) {
         File[] files = directory.listFiles();

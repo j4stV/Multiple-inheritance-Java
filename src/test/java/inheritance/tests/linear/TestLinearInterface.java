@@ -3,13 +3,13 @@ package inheritance.tests.linear;
 import inheritance.annotations.Root;
 
 /**
- * Интерфейс для тестирования линейного наследования (A -> B -> C)
+ * Interface for testing linear inheritance (A -> B -> C)
  */
 @Root
 public interface TestLinearInterface {
     /**
-     * Тестовый метод, который будет использоваться в классах наследования
-     * @return Строку, отражающую иерархию вызовов методов
+     * Test method that will be used in inheritance classes
+     * @return String reflecting the hierarchy of method calls
      */
     String testMethod();
 } 

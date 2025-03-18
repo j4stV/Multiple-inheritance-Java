@@ -3,28 +3,28 @@ package example.diamond;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс F - демонстрация сложного множественного наследования
- * Наследуется как от D (с его сложной цепочкой наследования D → B → C → E → A),
- * так и напрямую от A, создавая альтернативный путь наследования.
+ * Class F - demonstration of complex multiple inheritance
+ * Inherits both from D (with its complex inheritance chain D → B → C → E → A)
+ * and directly from A, creating an alternative inheritance path.
  */
 @Mixin({A.class, D.class})
 public class F extends SomeInterfaceRoot {
 
     @Override
     public void method() {
-        System.out.println("F.method(): Начало выполнения");
+        System.out.println("F.method(): Execution start");
         
-        // Вызываем метод через цепочку наследования
+        // Call method through inheritance chain
         nextMethod();
         
-        System.out.println("F.method(): Конец выполнения");
+        System.out.println("F.method(): Execution end");
     }
     
     /**
-     * Метод для отображения сложной структуры наследования
+     * Method for displaying complex inheritance structure
      */
     public void showComplexInheritance() {
-        System.out.println("\nКомплексная структура наследования для F:");
+        System.out.println("\nComplex inheritance structure for F:");
         System.out.println("F");
         
         if (parent != null) {
@@ -33,17 +33,17 @@ public class F extends SomeInterfaceRoot {
     }
     
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;
     }
     
     /**
-     * Рекурсивно отображает родительские классы в структуре наследования
-     * @param parent Родительский объект для анализа
-     * @param indent Отступ для форматирования вывода
+     * Recursively displays parent classes in the inheritance structure
+     * @param parent Parent object to analyze
+     * @param indent Indentation for formatting output
      */
     private void showParentHierarchy(Object parent, String indent) {
         if (parent == null) return;
@@ -58,14 +58,14 @@ public class F extends SomeInterfaceRoot {
                 showParentHierarchy(nextParent, indent + "  ");
             }
         } catch (Exception e) {
-            System.out.println(indent + "Ошибка при получении иерархии: " + e.getMessage());
+            System.out.println(indent + "Error getting hierarchy: " + e.getMessage());
         }
     }
     
     /**
-     * Пример уникального метода класса F
+     * Example of unique method of class F
      */
     public void methodF() {
-        System.out.println("F.methodF(): Выполнение уникального метода класса F");
+        System.out.println("F.methodF(): Executing unique method of class F");
     }
 } 

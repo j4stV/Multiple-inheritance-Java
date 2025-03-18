@@ -1,140 +1,140 @@
 @echo off
-echo === Скрипт компиляции проекта ромбовидного наследования ===
+echo === Diamond inheritance project compilation script ===
 
-REM Очистка и создание директорий
+REM Cleanup and directory creation
 if exist bin rmdir /s /q bin
 mkdir bin
 
-REM Компилируем аннотации
-echo Компиляция аннотаций...
+REM Compile annotations
+echo Compiling annotations...
 javac -d bin src/main/java/inheritance/annotations/Root.java src/main/java/inheritance/annotations/Mixin.java
 if errorlevel 1 (
-  echo Ошибка при компиляции аннотаций
+  echo Error compiling annotations
   exit /b 1
 )
 
-REM Компилируем процессор аннотаций
-echo Компиляция процессора аннотаций...
+REM Compile annotation processor
+echo Compiling annotation processor...
 javac -d bin -cp bin src/main/java/inheritance/processor/RootProcessor.java
 if errorlevel 1 (
-  echo Ошибка при компиляции процессора аннотаций
+  echo Error compiling annotation processor
   exit /b 1
 )
 
-REM Создаем директории для сервисного файла
+REM Create service file directories
 mkdir bin\META-INF
 mkdir bin\META-INF\services
 
-REM Создаем сервисный файл для процессора аннотаций
+REM Create service file for annotation processor
 echo inheritance.processor.RootProcessor > bin\META-INF\services\javax.annotation.processing.Processor
 
-REM Компилируем фабрику
-echo Компиляция фабрики...
+REM Compile factory
+echo Compiling factory...
 javac -d bin -cp bin src/main/java/inheritance/factory/MixinFactory.java
 if errorlevel 1 (
-  echo Ошибка при компиляции фабрики
+  echo Error compiling factory
   exit /b 1
 )
 
-REM Компилируем корневой интерфейс
-echo Компиляция корневого интерфейса...
+REM Compile root interface
+echo Compiling root interface...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/SomeInterface.java
 if errorlevel 1 (
-  echo Ошибка при компиляции корневого интерфейса
+  echo Error compiling root interface
   exit /b 1
 )
 
-REM Компилируем класс A
-echo Компиляция класса A...
+REM Compile class A
+echo Compiling class A...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/A.java
 if errorlevel 1 (
-  echo Ошибка при компиляции класса A
+  echo Error compiling class A
   exit /b 1
 )
 
-REM Компилируем классы B и C
-echo Компиляция классов B и C...
+REM Compile classes B and C
+echo Compiling classes B and C...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/B.java src/main/java/example/diamond/C.java
 if errorlevel 1 (
-  echo Ошибка при компиляции классов B и C
+  echo Error compiling classes B and C
   exit /b 1
 )
 
-REM Компилируем класс E
-echo Компиляция класса E...
+REM Compile class E
+echo Compiling class E...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/E.java
 if errorlevel 1 (
-  echo Ошибка при компиляции класса E
+  echo Error compiling class E
   exit /b 1
 )
 
-REM Компилируем класс D
-echo Компиляция класса D...
+REM Compile class D
+echo Compiling class D...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/D.java
 if errorlevel 1 (
-  echo Ошибка при компиляции класса D
+  echo Error compiling class D
   exit /b 1
 )
 
-REM Компилируем класс F
-echo Компиляция класса F...
+REM Compile class F
+echo Compiling class F...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/F.java
 if errorlevel 1 (
-  echo Ошибка при компиляции класса F
+  echo Error compiling class F
   exit /b 1
 )
 
-REM Компилируем тестовый класс
-echo Компиляция тестового класса...
+REM Compile test class
+echo Compiling test class...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/DiamondTest.java
 if errorlevel 1 (
-  echo Ошибка при компиляции тестового класса
+  echo Error compiling test class
   exit /b 1
 )
 
-REM Компилируем простой тестовый класс
-echo Компиляция простого тестового класса...
+REM Compile simple test class
+echo Compiling simple test class...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/SimpleTest.java
 if errorlevel 1 (
-  echo Ошибка при компиляции простого тестового класса
+  echo Error compiling simple test class
   exit /b 1
 )
 
-REM Компилируем пример сложного наследования
-echo Компиляция примера сложного наследования...
+REM Compile complex inheritance example
+echo Compiling complex inheritance example...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/ComplexInheritanceExample.java
 if errorlevel 1 (
-  echo Ошибка при компиляции примера сложного наследования
+  echo Error compiling complex inheritance example
   exit /b 1
 )
 
-REM Компилируем демонстрацию структуры наследования
-echo Компиляция демонстрации структуры наследования...
+REM Compile inheritance structure demo
+echo Compiling inheritance structure demo...
 javac -d bin -cp bin src/main/java/InheritanceStructureDemo.java
 if errorlevel 1 (
-  echo Ошибка при компиляции демонстрации структуры наследования
+  echo Error compiling inheritance structure demo
   exit /b 1
 )
 
-REM Компилируем новую демонстрацию наследования методов
-echo Компиляция демонстрации наследования методов...
+REM Compile method inheritance demo
+echo Compiling method inheritance demo...
 javac -d bin -cp bin src/main/java/MethodInheritanceDemo.java
 if errorlevel 1 (
-  echo Ошибка при компиляции демонстрации наследования методов
+  echo Error compiling method inheritance demo
   exit /b 1
 )
 
-REM Компилируем Main класс
-echo Компиляция Main класса...
+REM Compile Main class
+echo Compiling Main class...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/Main.java
 if errorlevel 1 (
-  echo Ошибка при компиляции Main класса
+  echo Error compiling Main class
   exit /b 1
 )
 
-echo Компиляция успешно завершена!
-echo Выполните 'java -cp bin Main' для запуска программы
-echo Или выполните 'java -cp bin example.diamond.DiamondTest' для запуска теста
-echo Или выполните 'java -cp bin SimpleTest' для запуска простого теста
-echo Или выполните 'java -cp bin ComplexInheritanceExample' для запуска примера сложного наследования
-echo Или выполните 'java -cp bin MethodInheritanceDemo' для демонстрации наследования методов
+echo Compilation completed successfully!
+echo Run 'java -cp bin Main' to execute the program
+echo Or run 'java -cp bin example.diamond.DiamondTest' to run the test
+echo Or run 'java -cp bin SimpleTest' to run the simple test
+echo Or run 'java -cp bin ComplexInheritanceExample' to run the complex inheritance example
+echo Or run 'java -cp bin MethodInheritanceDemo' to run the method inheritance demo

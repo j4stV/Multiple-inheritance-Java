@@ -3,45 +3,45 @@ package inheritance.tests.generic;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс, наследующийся от StringContainer через @Mixin
- * Расширяет функциональность базового класса, добавляя преобразование к верхнему регистру
+ * Class inheriting from StringContainer through @Mixin
+ * Extends functionality of the base class by adding conversion to uppercase
  */
 @Mixin(StringContainer.class)
 public class EnhancedStringContainer extends GenericInterfaceRoot<String> {
     
     /**
-     * Возвращает значение из родительского класса
+     * Returns value from the parent class
      */
     @Override
     public String getValue() {
-        // Делегируем вызов родительскому классу
+        // Delegate call to the parent class
         return nextGetValue();
     }
     
     /**
-     * Устанавливает значение, вызывая метод родительского класса
+     * Sets value by calling the parent class method
      */
     @Override
     public void setValue(String value) {
-        // Делегируем вызов родительскому классу
+        // Delegate call to the parent class
         nextSetValue(value);
     }
     
     /**
-     * Трансформирует значение, добавляя функциональность к методу родительского класса
-     * Преобразует результат к верхнему регистру
+     * Transforms value, adding functionality to the parent class method
+     * Converts the result to uppercase
      */
     @Override
     public String transformValue(String prefix) {
-        // Сначала получаем результат из родительского класса
+        // First get the result from the parent class
         String parentResult = nextTransformValue(prefix);
-        // Затем преобразуем его к верхнему регистру
+        // Then convert it to uppercase
         return parentResult.toUpperCase();
     }
     
     /**
-     * Дополнительный метод, специфичный для этого класса
-     * @return Значение в нижнем регистре
+     * Additional method specific to this class
+     * @return Value in lowercase
      */
     public String getLowerCaseValue() {
         String value = getValue();

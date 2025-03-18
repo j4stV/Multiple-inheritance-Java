@@ -1,14 +1,14 @@
 package inheritance.tests.generic;
 
 /**
- * Базовый класс, реализующий дженерик-интерфейс с типом String
- * Используется как начало цепочки наследования
+ * Base class implementing generic interface with String type
+ * Used as the beginning of inheritance chain
  */
 public class StringContainer extends GenericInterfaceRoot<String> {
     private String value;
     
     /**
-     * Возвращает текущее значение
+     * Returns the current value
      */
     @Override
     public String getValue() {
@@ -16,7 +16,7 @@ public class StringContainer extends GenericInterfaceRoot<String> {
     }
     
     /**
-     * Устанавливает новое значение
+     * Sets a new value
      */
     @Override
     public void setValue(String value) {
@@ -24,7 +24,7 @@ public class StringContainer extends GenericInterfaceRoot<String> {
     }
     
     /**
-     * Трансформирует значение, добавляя указанный префикс
+     * Transforms the value by adding the specified prefix
      */
     @Override
     public String transformValue(String prefix) {

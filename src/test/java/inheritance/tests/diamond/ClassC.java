@@ -3,33 +3,33 @@ package inheritance.tests.diamond;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс C для ромбовидного наследования
- * Наследуется от класса A через аннотацию @Mixin
+ * Class C for diamond inheritance
+ * Inherits from class A through @Mixin annotation
  */
 @Mixin(ClassA.class)
 public class ClassC extends DiamondInterfaceRoot {
     /**
-     * Реализация метода из интерфейса
-     * @return "C" + результат вызова метода из родительского класса
+     * Implementation of method from interface
+     * @return "C" + result of calling method from parent class
      */
     public String testMethod() {
-        System.out.println("C.testMethod(): начало выполнения");
+        System.out.println("C.testMethod(): execution start");
         String result = "C" + nextTestMethod();
-        System.out.println("C.testMethod(): конец выполнения");
+        System.out.println("C.testMethod(): execution end");
         return result;
     }
     
     /**
-     * Уникальный метод класса C
-     * @return Строка, идентифицирующая класс C
+     * Unique method of class C
+     * @return String identifying class C
      */
     public String methodC() {
         return "C-specific";
     }
     
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;

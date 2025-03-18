@@ -1,26 +1,26 @@
-## Описание
+## Description
 
-Эта библиотека предоставляет реализацию механизма множественного наследования для Java с использованием аннотаций, процессора аннотаций и фабрики для создания экземпляров классов. Библиотека позволяет преодолеть ограничение Java на одиночное наследование, сохраняя при этом типобезопасность и предсказуемое поведение.
+This library provides an implementation of multiple inheritance mechanism for Java using annotations, annotation processor, and a factory for creating class instances. The library allows overcoming Java's single inheritance limitation while maintaining type safety and predictable behavior.
 
-## Компоненты библиотеки
+## Library Components
 
-1. **Аннотации**:
-   - `@Root` - помечает интерфейс как корневой в иерархии наследования
-   - `@Mixin` - указывает родительские классы, от которых происходит наследование
+1. **Annotations**:
+   - `@Root` - marks an interface as the root in the inheritance hierarchy
+   - `@Mixin` - specifies parent classes from which inheritance occurs
 
-2. **Процессор аннотаций**:
-   - `RootProcessor` - генерирует базовый класс для интерфейса, помеченного аннотацией `@Root`
+2. **Annotation Processor**:
+   - `RootProcessor` - generates a base class for an interface marked with the `@Root` annotation
 
-3. **Фабрика**:
-   - `MixinFactory` - создает экземпляры классов с корректно настроенной цепочкой наследования
+3. **Factory**:
+   - `MixinFactory` - creates instances of classes with correctly configured inheritance chain
 
-## Инструкция по использованию
+## Usage Instructions
 
-### 1. Настройка проекта
+### 1. Project Setup
 
-Чтобы начать использовать библиотеку, добавьте ее JAR-файл в ваш проект и убедитесь, что процессор аннотаций включен в процесс компиляции.
+To start using the library, add its JAR file to your project and ensure that the annotation processor is included in the compilation process.
 
-Для сборки с помощью Maven добавьте в `pom.xml`:
+For Maven build, add to `pom.xml`:
 
 ```xml
 <dependencies>
@@ -53,7 +53,7 @@
 </build>
 ```
 
-Для сборки с помощью Gradle добавьте в `build.gradle`:
+For Gradle build, add to `build.gradle`:
 
 ```groovy
 dependencies {
@@ -62,9 +62,9 @@ dependencies {
 }
 ```
 
-### 2. Создание корневого интерфейса
+### 2. Creating a Root Interface
 
-Определите корневой интерфейс и пометьте его аннотацией `@Root`:
+Define a root interface and mark it with the `@Root` annotation:
 
 ```java
 package example;
@@ -77,11 +77,11 @@ public interface SomeInterface {
 }
 ```
 
-После компиляции процессор аннотаций автоматически сгенерирует класс `SomeInterfaceRoot`.
+After compilation, the annotation processor will automatically generate a `SomeInterfaceRoot` class.
 
-### 3. Создание классов в иерархии наследования
+### 3. Creating Classes in the Inheritance Hierarchy
 
-Создайте базовый класс, который будет расширять сгенерированный класс:
+Create a base class that extends the generated class:
 
 ```java
 package example;
@@ -89,13 +89,13 @@ package example;
 public class A extends SomeInterfaceRoot {
     @Override
     public void method() {
-        System.out.println("A.method(): Выполнение метода в базовом классе");
-        nextMethod(); // Вызов метода следующего в цепочке
+        System.out.println("A.method(): Executing method in base class");
+        nextMethod(); // Call the next method in the chain
     }
 }
 ```
 
-Затем создайте классы, наследующие от базового, с указанием родителей через аннотацию `@Mixin`:
+Then create classes inheriting from the base class, specifying parents via the `@Mixin` annotation:
 
 ```java
 package example;
@@ -106,13 +106,13 @@ import inheritance.annotations.Mixin;
 public class B extends SomeInterfaceRoot {
     @Override
     public void method() {
-        System.out.println("B.method(): Начало выполнения");
-        nextMethod(); // Вызов метода следующего в цепочке
-        System.out.println("B.method(): Конец выполнения");
+        System.out.println("B.method(): Beginning execution");
+        nextMethod(); // Call the next method in the chain
+        System.out.println("B.method(): End of execution");
     }
     
     public void methodB() {
-        System.out.println("B.methodB(): Уникальный метод класса B");
+        System.out.println("B.methodB(): Unique method of class B");
     }
 }
 ```
@@ -126,20 +126,20 @@ import inheritance.annotations.Mixin;
 public class C extends SomeInterfaceRoot {
     @Override
     public void method() {
-        System.out.println("C.method(): Начало выполнения");
-        nextMethod(); // Вызов метода следующего в цепочке
-        System.out.println("C.method(): Конец выполнения");
+        System.out.println("C.method(): Beginning execution");
+        nextMethod(); // Call the next method in the chain
+        System.out.println("C.method(): End of execution");
     }
     
     public void methodC() {
-        System.out.println("C.methodC(): Уникальный метод класса C");
+        System.out.println("C.methodC(): Unique method of class C");
     }
 }
 ```
 
-### 4. Создание класса с множественным наследованием
+### 4. Creating a Class with Multiple Inheritance
 
-Теперь вы можете создать класс, который наследует от нескольких классов:
+Now you can create a class that inherits from multiple classes:
 
 ```java
 package example;
@@ -150,57 +150,57 @@ import inheritance.annotations.Mixin;
 public class D extends SomeInterfaceRoot {
     @Override
     public void method() {
-        System.out.println("D.method(): Начало выполнения");
-        nextMethod(); // Вызов метода следующего в цепочке
-        System.out.println("D.method(): Конец выполнения");
+        System.out.println("D.method(): Beginning execution");
+        nextMethod(); // Call the next method in the chain
+        System.out.println("D.method(): End of execution");
     }
     
     public void methodD() {
-        System.out.println("D.methodD(): Уникальный метод класса D");
+        System.out.println("D.methodD(): Unique method of class D");
     }
 }
 ```
 
-### 5. Создание экземпляров с помощью фабрики
+### 5. Creating Instances Using the Factory
 
-Используйте `MixinFactory` для создания экземпляров классов:
+Use `MixinFactory` to create class instances:
 
 ```java
 import inheritance.factory.MixinFactory;
 
 public class Main {
     public static void main(String[] args) {
-        // Включаем вывод отладочной информации (по желанию)
+        // Enable debug output (optional)
         MixinFactory.setDebugEnabled(true);
         
-        // Создаем экземпляр класса с множественным наследованием
+        // Create an instance of a class with multiple inheritance
         D d = MixinFactory.createInstance(D.class);
         
-        // Вызываем метод, который будет выполнен по цепочке наследования
+        // Call a method that will be executed along the inheritance chain
         d.method();
         
-        // Вызываем уникальный метод класса
+        // Call a unique method of the class
         d.methodD();
     }
 }
 ```
 
-При выполнении метода `d.method()` будет соблюдаться порядок вызовов в соответствии с топологической сортировкой иерархии наследования:
+When executing the `d.method()` method, the order of calls will be observed according to the topological sorting of the inheritance hierarchy:
 
 ```
-D.method(): Начало выполнения
-B.method(): Начало выполнения
-A.method(): Выполнение метода в базовом классе
-B.method(): Конец выполнения
-D.method(): Конец выполнения
+D.method(): Beginning execution
+B.method(): Beginning execution
+A.method(): Executing method in base class
+B.method(): End of execution
+D.method(): End of execution
 ```
 
-### 6. Доступ к методам родительских классов
+### 6. Accessing Parent Class Methods
 
-Вы можете получить доступ к родительскому объекту через поле `parent` или метод `getParent()`:
+You can access the parent object through the `parent` field or the `getParent()` method:
 
 ```java
-// В классе D
+// In class D
 public void callParentMethods() {
     if (parent instanceof B) {
         ((B)parent).methodB();
@@ -208,89 +208,89 @@ public void callParentMethods() {
 }
 ```
 
-## Продвинутые сценарии использования
+## Advanced Usage Scenarios
 
-### Создание сложной иерархии наследования
+### Creating a Complex Inheritance Hierarchy
 
-Вы можете создавать более сложные структуры наследования:
+You can create more complex inheritance structures:
 
 ```java
 @Mixin({B.class, C.class, E.class})
 public class D extends SomeInterfaceRoot {
-    // реализация
+    // implementation
 }
 
 @Mixin({A.class, D.class})
 public class F extends SomeInterfaceRoot {
-    // реализация
+    // implementation
 }
 ```
 
-### Управление отладочной информацией
+### Managing Debug Information
 
 ```java
-// Включение/выключение отладочного вывода
-MixinFactory.setDebugEnabled(true); // или false
+// Enable/disable debug output
+MixinFactory.setDebugEnabled(true); // or false
 
-// Запуск с параметром командной строки
+// Run with a command line parameter
 java -cp bin Main --debug=true
 ```
 
-## Компиляция и запуск
+## Compilation and Execution
 
-### Компиляция проекта
+### Project Compilation
 
-Проект можно скомпилировать с помощью скрипта `compile.bat` (Windows) или `compile.sh` (Linux/macOS):
+The project can be compiled using the `compile.bat` script (Windows) or `compile.sh` (Linux/macOS):
 
 ```bash
 .\compile.bat
 ```
 
-### Запуск примеров
+### Running Examples
 
-После компиляции вы можете запустить примеры:
+After compilation, you can run the examples:
 
 ```bash
-# Основной пример
+# Main example
 java -cp bin Main
 
-# Тест ромбовидного наследования
+# Diamond inheritance test
 java -cp bin example.diamond.DiamondTest
 
-# Простой тест
+# Simple test
 java -cp bin SimpleTest
 
-# Пример сложного наследования
+# Complex inheritance example
 java -cp bin ComplexInheritanceExample
 
-# Демонстрация наследования методов
+# Method inheritance demo
 java -cp bin MethodInheritanceDemo
 ```
 
-## Ограничения
+## Limitations
 
-1. Аннотация `@Root` должна быть применена только к одному интерфейсу в проекте
-2. Текущая реализация создает линейную цепочку наследования по порядку топологической сортировки
-3. Каждый класс должен расширять сгенерированный класс `[ИмяИнтерфейса]Root`
-4. Процессор аннотаций должен быть включен в процесс компиляции
+1. The `@Root` annotation should be applied to only one interface in the project
+2. The current implementation creates a linear inheritance chain according to the topological sorting order
+3. Each class must extend the generated `[InterfaceName]Root` class
+4. The annotation processor must be included in the compilation process
 
-## Требования
+## Requirements
 
-- Java 11 или выше
-- Поддержка аннотаций и процессоров аннотаций
+- Java 11 or higher
+- Support for annotations and annotation processors
 
-## Структура проекта
+## Project Structure
 
 ```
 src/main/java/
-├── example/diamond/        # Примеры классов
+├── example/diamond/        # Example classes
 ├── inheritance/
-│   ├── annotations/        # Аннотации для наследования
-│   ├── factory/            # Фабрика для создания объектов
-│   └── processor/          # Процессор аннотаций
-└── [Демонстрационные классы]
+│   ├── annotations/        # Inheritance annotations
+│   ├── factory/            # Object creation factory
+│   └── processor/          # Annotation processor
+└── [Demo classes]
 ```
 
-## Лицензия
+## License
 
 MIT License

@@ -7,19 +7,19 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Тестовый класс для проверки алгоритма топологической сортировки
- * в фабрике множественного наследования
+ * Test class for verifying the topological sorting algorithm
+ * in the multiple inheritance factory
  */
 public class TopologicalSortTest {
     
     @Before
     public void setUp() {
-        // Отключаем вывод отладочной информации
+        // Disable debug output
         MixinFactory.setDebugEnabled(false);
-        // Очищаем кэш перед каждым тестом
+        // Clear cache before each test
         MixinFactory.clearCache();
         
-        // Сбрасываем счетчики посещения для всех узлов
+        // Reset visit counters for all nodes
         NodeA.resetVisitOrder();
         NodeB.resetVisitOrder();
         NodeC.resetVisitOrder();
@@ -30,90 +30,90 @@ public class TopologicalSortTest {
     
     @After
     public void tearDown() {
-        // Очищаем кэш после каждого теста
+        // Clear cache after each test
         MixinFactory.clearCache();
     }
     
     /**
-     * Проверяет простую линейную цепочку наследования (A <- B)
+     * Verifies a simple linear inheritance chain (A <- B)
      */
     @Test
     public void testSimpleLinearInheritance() {
         NodeB nodeB = MixinFactory.createInstance(NodeB.class);
         
-        // Порядок должен быть B -> A
+        // Order should be B -> A
         String result = nodeB.getTopologicalOrder();
         System.out.println("Linear inheritance order: " + result);
         
-        assertTrue("B должен быть перед A", result.startsWith("B"));
-        assertTrue("A должен быть после B", result.contains("-> A"));
+        assertTrue("B should be before A", result.startsWith("B"));
+        assertTrue("A should be after B", result.contains("-> A"));
     }
     
     /**
-     * Проверяет простое ромбовидное наследование (A <- B, A <- C, B,C <- D)
+     * Verifies simple diamond inheritance (A <- B, A <- C, B,C <- D)
      */
     @Test
     public void testDiamondInheritance() {
         NodeD nodeD = MixinFactory.createInstance(NodeD.class);
         
-        // Порядок должен быть D -> B/C -> A
+        // Order should be D -> B/C -> A
         String result = nodeD.getTopologicalOrder();
         System.out.println("Diamond inheritance order: " + result);
         
-        assertTrue("D должен быть первым", result.startsWith("D"));
+        assertTrue("D should be first", result.startsWith("D"));
         
-        // Проверяем, что A встречается только один раз (нет дублирования)
+        // Check that A appears only once (no duplication)
         int countA = result.split("A\\(").length - 1;
-        assertEquals("A должен встречаться только один раз", 1, countA);
+        assertEquals("A should appear only once", 1, countA);
         
-        // Проверяем общую структуру
-        assertTrue("Порядок должен быть D -> (B или C) -> (C или B) -> A", 
+        // Check overall structure
+        assertTrue("Order should be D -> (B or C) -> (C or B) -> A", 
                 result.matches("D\\(\\d+\\) -> [BC]\\(\\d+\\) -> [BC]\\(\\d+\\) -> A\\(\\d+\\)"));
     }
     
     /**
-     * Проверяет сложный граф наследования с несколькими путями
+     * Verifies a complex inheritance graph with multiple paths
      */
     @Test
     public void testComplexGraph() {
         NodeF nodeF = MixinFactory.createInstance(NodeF.class);
         
-        // Порядок должен быть F -> C/E -> B -> A
+        // Order should be F -> C/E -> B -> A
         String result = nodeF.getTopologicalOrder();
         System.out.println("Complex graph inheritance order: " + result);
         
-        assertTrue("F должен быть первым", result.startsWith("F"));
+        assertTrue("F should be first", result.startsWith("F"));
         
-        // Проверяем, что A и B встречаются только один раз (нет дублирования)
+        // Check that A and B appear only once (no duplication)
         int countA = result.split("A\\(").length - 1;
         int countB = result.split("B\\(").length - 1;
         
-        assertEquals("A должен встречаться только один раз", 1, countA);
-        assertEquals("B должен встречаться только один раз", 1, countB);
+        assertEquals("A should appear only once", 1, countA);
+        assertEquals("B should appear only once", 1, countB);
         
-        // Проверяем общую структуру - один из возможных путей
-        assertTrue("Структура наследования некорректна", 
+        // Check overall structure - one of possible paths
+        assertTrue("Inheritance structure is incorrect", 
                 result.contains("F(") && result.contains("E(") && 
                 result.contains("C(") && result.contains("B(") && 
                 result.contains("A("));
     }
     
     /**
-     * Проверяет различные точки входа в граф, которые должны давать
-     * топологически эквивалентный результат
+     * Verifies different entry points into the graph which should produce
+     * topologically equivalent results
      */
     @Test
     public void testDifferentEntryPoints() {
-        // Сбрасываем счетчики
+        // Reset counters
         NodeA.resetVisitOrder();
         NodeB.resetVisitOrder();
         NodeC.resetVisitOrder();
         
-        // Создаем экземпляры с разных точек входа
+        // Create instances from different entry points
         NodeB nodeB = MixinFactory.createInstance(NodeB.class);
         String resultB = nodeB.getTopologicalOrder();
         
-        // Очищаем кэш и сбрасываем счетчики
+        // Clear cache and reset counters
         MixinFactory.clearCache();
         NodeA.resetVisitOrder();
         NodeB.resetVisitOrder();
@@ -125,11 +125,11 @@ public class TopologicalSortTest {
         System.out.println("Entry B order: " + resultB);
         System.out.println("Entry C order: " + resultC);
         
-        // Проверяем, что оба пути заканчиваются на A и имеют корректную структуру
-        assertTrue("Путь B должен заканчиваться на A", resultB.endsWith("A(1)"));
-        assertTrue("Путь C должен заканчиваться на A", resultC.endsWith("A(1)"));
+        // Check that both paths end with A and have correct structure
+        assertTrue("Path B should end with A", resultB.endsWith("A(1)"));
+        assertTrue("Path C should end with A", resultC.endsWith("A(1)"));
         
-        assertTrue("Путь B имеет некорректную структуру", resultB.matches("B\\(\\d+\\) -> A\\(\\d+\\)"));
-        assertTrue("Путь C имеет некорректную структуру", resultC.matches("C\\(\\d+\\) -> A\\(\\d+\\)"));
+        assertTrue("Path B has incorrect structure", resultB.matches("B\\(\\d+\\) -> A\\(\\d+\\)"));
+        assertTrue("Path C has incorrect structure", resultC.matches("C\\(\\d+\\) -> A\\(\\d+\\)"));
     }
 } 

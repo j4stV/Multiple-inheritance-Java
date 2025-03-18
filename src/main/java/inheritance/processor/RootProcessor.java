@@ -38,7 +38,7 @@ public class RootProcessor extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         for (Element element : roundEnv.getElementsAnnotatedWith(Root.class)) {
             if (element.getKind() != ElementKind.INTERFACE) {
-                messager.printMessage(Diagnostic.Kind.ERROR, "Только интерфейсы могут быть помечены аннотацией @Root", element);
+                messager.printMessage(Diagnostic.Kind.ERROR, "Only interfaces can be marked with @Root annotation", element);
                 continue;
             }
 
@@ -50,7 +50,7 @@ public class RootProcessor extends AbstractProcessor {
             try {
                 generateRootClass(packageName, interfaceName, rootClassName, interfaceElement);
             } catch (IOException e) {
-                messager.printMessage(Diagnostic.Kind.ERROR, "Ошибка при генерации класса: " + e.getMessage(), element);
+                messager.printMessage(Diagnostic.Kind.ERROR, "Error generating class: " + e.getMessage(), element);
             }
         }
         return true;
@@ -63,11 +63,11 @@ public class RootProcessor extends AbstractProcessor {
             .filter(e -> e.getKind() == ElementKind.METHOD)
             .collect(Collectors.toList());
         
-        // Получаем параметры типа интерфейса
+        // Get interface type parameters
         List<? extends TypeParameterElement> typeParameters = interfaceElement.getTypeParameters();
         
         try (PrintWriter out = new PrintWriter(javaFile.openWriter())) {
-            // Создаем заголовок файла
+            // Create file header
             out.println("package " + packageName + ";");
             out.println();
             out.println("import inheritance.annotations.Mixin;");
@@ -78,13 +78,13 @@ public class RootProcessor extends AbstractProcessor {
             out.println("import java.lang.reflect.ParameterizedType;");
             out.println();
             out.println("/**");
-            out.println(" * Автоматически сгенерированный корневой класс для интерфейса " + interfaceName);
+            out.println(" * Automatically generated root class for interface " + interfaceName);
             if (!typeParameters.isEmpty()) {
-                out.println(" * @param <" + formatTypeParameters(typeParameters) + "> Параметры типа");
+                out.println(" * @param <" + formatTypeParameters(typeParameters) + "> Type parameters");
             }
             out.println(" */");
             
-            // Создаем объявление класса с параметрами типа, если они есть
+            // Create class declaration with type parameters if present
             out.print("public abstract class " + rootClassName);
             if (!typeParameters.isEmpty()) {
                 out.print("<" + formatTypeParameters(typeParameters) + ">");
@@ -96,11 +96,11 @@ public class RootProcessor extends AbstractProcessor {
             out.println(" {");
             out.println();
 
-            // Поле для хранения родительского объекта
+            // Field for storing parent object
             out.println("    protected Object parent;");
             out.println();
             
-            // Добавляем статическое поле для отслеживания глубины рекурсии
+            // Add static field for tracking recursion depth
             out.println("    private static final int MAX_CALL_DEPTH = 20;");
             out.println("    private static final ThreadLocal<Integer> callDepth = new ThreadLocal<Integer>() {");
             out.println("        @Override");
@@ -110,31 +110,31 @@ public class RootProcessor extends AbstractProcessor {
             out.println("    };");
             out.println();
 
-            // Пустой конструктор без логики инициализации
+            // Empty constructor without initialization logic
             out.println("    public " + rootClassName + "() {");
-            out.println("        // Инициализация выполняется фабрикой MixinFactory");
+            out.println("        // Initialization is performed by MixinFactory");
             out.println("    }");
             out.println();
 
-            // Статический метод для создания экземпляров через фабрику
+            // Static method for creating instances through the factory
             out.println("    /**");
-            out.println("     * Создает экземпляр класса через фабрику MixinFactory");
-            out.println("     * @param clazz Класс для создания экземпляра");
-            out.println("     * @param <T> Тип создаваемого экземпляра");
-            out.println("     * @return Настроенный экземпляр класса");
+            out.println("     * Creates an instance of the class through MixinFactory");
+            out.println("     * @param clazz Class to create an instance of");
+            out.println("     * @param <T> Type of instance being created");
+            out.println("     * @return Configured instance of the class");
             out.println("     */");
             out.println("    public static <T> T createInstance(Class<T> clazz) {");
             out.println("        return MixinFactory.createInstance(clazz);");
             out.println("    }");
             out.println();
 
-            // Для каждого метода в интерфейсе создаем метод nextXXX
+            // For each method in the interface, create a nextXXX method
             for (Element methodElement : enclosedElements) {
                 ExecutableElement method = (ExecutableElement) methodElement;
                 String methodName = method.getSimpleName().toString();
                 String nextMethodName = "next" + Character.toUpperCase(methodName.charAt(0)) + methodName.substring(1);
 
-                // Получаем типы параметров и возвращаемый тип
+                // Get parameter types and return type
                 String returnType = method.getReturnType().toString();
                 
                 List<? extends VariableElement> parameters = method.getParameters();
@@ -146,7 +146,7 @@ public class RootProcessor extends AbstractProcessor {
                     .map(p -> p.getSimpleName().toString())
                     .collect(Collectors.joining(", "));
 
-                // Генерируем метод nextXXX с проверкой глубины вызовов
+                // Generate nextXXX method with call depth checking
                 out.println("    protected " + returnType + " " + nextMethodName + "(" + parameterList + ") {");
                 out.println("        if (parent == null) {");
                 if (!returnType.equals("void")) {
@@ -157,10 +157,10 @@ public class RootProcessor extends AbstractProcessor {
                 out.println("        }");
                 out.println();
                 
-                // Проверка и увеличение счетчика глубины вызовов
+                // Check and increase call depth counter
                 out.println("        int currentDepth = callDepth.get();");
                 out.println("        if (currentDepth >= MAX_CALL_DEPTH) {");
-                out.println("            System.out.println(\"Превышена максимальная глубина вызовов методов: \" + MAX_CALL_DEPTH + \". Возможно, обнаружен цикл.\");");
+                out.println("            System.out.println(\"Maximum method call depth exceeded: \" + MAX_CALL_DEPTH + \". Possible cycle detected.\");");
                 if (!returnType.equals("void")) {
                     out.println("            return " + getDefaultReturnValue(returnType) + ";");
                 } else {
@@ -172,24 +172,24 @@ public class RootProcessor extends AbstractProcessor {
                 
                 out.println("        try {");
                 
-                // Для дженериков используем другой подход к получению метода
+                // For generics use a different approach to get the method
                 if (parameters.isEmpty()) {
                     out.println("            Method method = parent.getClass().getMethod(\"" + methodName + "\");");
                 } else {
-                    out.println("            // Создаем массив типов параметров");
+                    out.println("            // Create array of parameter types");
                     out.println("            Class<?>[] paramTypes = new Class<?>[" + parameters.size() + "];");
                     
-                    // Для каждого параметра определяем его тип
+                    // For each parameter determine its type
                     for (int i = 0; i < parameters.size(); i++) {
                         VariableElement param = parameters.get(i);
                         String paramType = param.asType().toString();
                         
-                        // Обработка типовых параметров
+                        // Handle type parameters
                         if (isTypeVariable(paramType, typeParameters)) {
-                            out.println("            // Для дженериков используем Object.class");
+                            out.println("            // For generics use Object.class");
                             out.println("            paramTypes[" + i + "] = Object.class;");
                         } else {
-                            // Для примитивных типов и обычных классов
+                            // For primitive types and regular classes
                             out.println("            paramTypes[" + i + "] = " + getClassForType(paramType) + ";");
                         }
                     }
@@ -199,16 +199,16 @@ public class RootProcessor extends AbstractProcessor {
 
                 if (!returnType.equals("void")) {
                     out.println("            " + returnType + " result = (" + returnType + ") method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
-                    out.println("            callDepth.set(currentDepth); // Восстанавливаем счетчик");
+                    out.println("            callDepth.set(currentDepth); // Restore counter");
                     out.println("            return result;");
                 } else {
                     out.println("            method.invoke(parent" + (parameterNames.isEmpty() ? "" : ", " + parameterNames) + ");");
-                    out.println("            callDepth.set(currentDepth); // Восстанавливаем счетчик");
+                    out.println("            callDepth.set(currentDepth); // Restore counter");
                 }
 
                 out.println("        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {");
-                out.println("            callDepth.set(currentDepth); // Восстанавливаем счетчик в случае ошибки");
-                out.println("            throw new RuntimeException(\"Ошибка при вызове метода родительского класса\", e);");
+                out.println("            callDepth.set(currentDepth); // Restore counter in case of error");
+                out.println("            throw new RuntimeException(\"Error calling parent class method\", e);");
                 out.println("        }");
                 out.println("    }");
                 out.println();
@@ -219,11 +219,11 @@ public class RootProcessor extends AbstractProcessor {
     }
     
     /**
-     * Проверяет, является ли тип параметром типа из списка параметров
+     * Checks if a type is a type parameter from the parameter list
      * 
-     * @param typeName Имя типа для проверки
-     * @param typeParameters Список параметров типа
-     * @return true, если тип является параметром типа
+     * @param typeName Type name to check
+     * @param typeParameters List of type parameters
+     * @return true if the type is a type parameter
      */
     private boolean isTypeVariable(String typeName, List<? extends TypeParameterElement> typeParameters) {
         for (TypeParameterElement tp : typeParameters) {
@@ -235,10 +235,10 @@ public class RootProcessor extends AbstractProcessor {
     }
     
     /**
-     * Возвращает строку для получения объекта Class для заданного типа
+     * Returns a string to get the Class object for the given type
      * 
-     * @param typeName Имя типа
-     * @return Строка для получения Class
+     * @param typeName Type name
+     * @return String to get the Class
      */
     private String getClassForType(String typeName) {
         switch (typeName) {
@@ -252,22 +252,22 @@ public class RootProcessor extends AbstractProcessor {
             case "char": return "char.class";
             case "void": return "void.class";
             default:
-                // Обрабатываем параметризованные типы
+                // Handle parameterized types
                 if (typeName.contains("<")) {
-                    // Для дженериков берем только базовый тип
+                    // For generics take only base type
                     String baseType = typeName.substring(0, typeName.indexOf('<'));
                     return baseType + ".class";
                 }
-                // Для обычных классов
+                // For regular classes
                 return typeName + ".class";
         }
     }
     
     /**
-     * Форматирует параметры типа для использования в объявлении класса
+     * Formats type parameters for use in class declaration
      * 
-     * @param typeParameters Список параметров типа
-     * @return Строка с форматированными параметрами типа
+     * @param typeParameters List of type parameters
+     * @return String with formatted type parameters
      */
     private String formatTypeParameters(List<? extends TypeParameterElement> typeParameters) {
         return typeParameters.stream()
@@ -287,20 +287,26 @@ public class RootProcessor extends AbstractProcessor {
             .collect(Collectors.joining(", "));
     }
 
-    private String getDefaultReturnValue(String returnType) {
-        switch (returnType) {
-            case "byte":
+    /**
+     * Gets default return value for type
+     * 
+     * @param typeName Type name
+     * @return Default value for the type
+     */
+    private String getDefaultReturnValue(String typeName) {
+        switch (typeName) {
+            case "boolean": return "false";
+            case "byte": 
             case "short":
-            case "int":
-            case "long":
-            case "char":
-                return "0";
-            case "float":
-            case "double":
-                return "0.0";
-            case "boolean":
-                return "false";
+            case "int": return "0";
+            case "long": return "0L";
+            case "float": return "0.0f";
+            case "double": return "0.0";
+            case "char": return "'\\0'";
+            case "java.lang.String":
+            case "String": return "\"\"";
             default:
+                // For reference types return null
                 return "null";
         }
     }

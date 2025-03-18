@@ -8,110 +8,110 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Тесты для проверки поддержки дженериков в системе множественного наследования
+ * Tests for verifying generics support in the multiple inheritance system
  */
 public class GenericInheritanceTest {
     
     @Before
     public void setUp() {
-        // Отключаем вывод отладочной информации
+        // Disable debug output
         MixinFactory.setDebugEnabled(false);
-        // Очищаем кэш инстансов перед тестом
+        // Clear instance cache before test
         MixinFactory.clearCache();
     }
     
     @After
     public void tearDown() {
-        // Очищаем кэш после теста
+        // Clear cache after test
         MixinFactory.clearCache();
     }
     
     /**
-     * Тест для проверки базовой работы с дженериками в классе StringContainer
+     * Test for checking basic generics functionality in StringContainer class
      */
     @Test
     public void testStringContainer() {
-        // Создаем экземпляр базового класса
+        // Create an instance of the base class
         StringContainer stringContainer = MixinFactory.createInstance(StringContainer.class);
         
-        // Устанавливаем и получаем значение
-        stringContainer.setValue("Тест дженериков");
-        assertEquals("Тест дженериков", stringContainer.getValue());
+        // Set and get value
+        stringContainer.setValue("Generics test");
+        assertEquals("Generics test", stringContainer.getValue());
         
-        // Проверяем трансформацию
-        assertEquals("Префикс: Тест дженериков", stringContainer.transformValue("Префикс"));
+        // Check transformation
+        assertEquals("Prefix: Generics test", stringContainer.transformValue("Prefix"));
     }
     
     /**
-     * Тест для проверки наследования с дженериками
+     * Test for checking inheritance with generics
      */
     @Test
     public void testEnhancedStringContainer() {
-        // Создаем экземпляр производного класса
+        // Create an instance of the derived class
         EnhancedStringContainer enhancedContainer = MixinFactory.createInstance(EnhancedStringContainer.class);
         
-        // Устанавливаем и получаем значение
-        enhancedContainer.setValue("Тест дженериков");
-        assertEquals("Тест дженериков", enhancedContainer.getValue());
+        // Set and get value
+        enhancedContainer.setValue("Generics test");
+        assertEquals("Generics test", enhancedContainer.getValue());
         
-        // Проверяем трансформацию с преобразованием к верхнему регистру
-        assertEquals("ПРЕФИКС: ТЕСТ ДЖЕНЕРИКОВ", enhancedContainer.transformValue("Префикс"));
+        // Check transformation with conversion to uppercase
+        assertEquals("PREFIX: GENERICS TEST", enhancedContainer.transformValue("Prefix"));
         
-        // Проверяем дополнительный метод
-        assertEquals("тест дженериков", enhancedContainer.getLowerCaseValue());
+        // Check additional method
+        assertEquals("generics test", enhancedContainer.getLowerCaseValue());
     }
     
     /**
-     * Тест для проверки работы с другим типом дженерика
+     * Test for checking work with another generic type
      */
     @Test
     public void testIntegerContainer() {
-        // Создаем экземпляр класса с целочисленным типом
+        // Create an instance of class with integer type
         IntegerContainer intContainer = MixinFactory.createInstance(IntegerContainer.class);
         
-        // Устанавливаем и получаем значение
+        // Set and get value
         intContainer.setValue(42);
         assertEquals(Integer.valueOf(42), intContainer.getValue());
         
-        // Проверяем трансформацию
-        assertEquals("Число (число): 42", intContainer.transformValue("Число"));
+        // Check transformation
+        assertEquals("Number (number): 42", intContainer.transformValue("Number"));
         
-        // Проверяем дополнительный метод
+        // Check additional method
         assertEquals(Integer.valueOf(126), intContainer.multiply(3));
     }
     
     /**
-     * Тест для проверки работы с множественным наследованием различных типов
+     * Test for checking work with multiple inheritance of different types
      */
     @Test
     public void testMixedTypeContainer() {
-        // Создаем экземпляр смешанного класса
+        // Create an instance of mixed class
         MixedTypeContainer mixedContainer = MixinFactory.createInstance(MixedTypeContainer.class);
         
-        // Тест со строковым значением, которое не является числом
-        mixedContainer.setValue("Тест");
-        assertEquals("Тест", mixedContainer.getValue());
+        // Test with string value that is not a number
+        mixedContainer.setValue("Test");
+        assertEquals("Test", mixedContainer.getValue());
         assertEquals(null, mixedContainer.getNumericValue());
         
-        // Проверяем трансформацию
-        assertTrue(mixedContainer.transformValue("Префикс").startsWith("ПРЕФИКС"));
-        assertFalse(mixedContainer.transformValue("Префикс").contains("Числовое значение"));
+        // Check transformation
+        assertTrue(mixedContainer.transformValue("Prefix").startsWith("PREFIX"));
+        assertFalse(mixedContainer.transformValue("Prefix").contains("Numeric value"));
         
-        // Тест с числовым значением в виде строки
+        // Test with numeric value as string
         mixedContainer.setValue("123");
         assertEquals("123", mixedContainer.getValue());
         assertEquals(Integer.valueOf(123), mixedContainer.getNumericValue());
         
-        // Проверяем трансформацию с числовым значением
-        String transformed = mixedContainer.transformValue("Число");
-        assertTrue(transformed.startsWith("ЧИСЛО"));
-        assertTrue(transformed.contains("[Числовое значение: 123]"));
+        // Check transformation with numeric value
+        String transformed = mixedContainer.transformValue("Number");
+        assertTrue(transformed.startsWith("NUMBER"));
+        assertTrue(transformed.contains("[Numeric value: 123]"));
         
-        // Проверяем комбинированный метод
+        // Check combined method
         String combined = mixedContainer.getCombinedInfo(2);
-        assertTrue(combined.contains("Текст: 123"));
-        assertTrue(combined.contains("В нижнем регистре: 123"));
-        assertTrue(combined.contains("Числовое значение: 123"));
-        assertTrue(combined.contains("После умножения на 2: 246"));
+        assertTrue(combined.contains("Text: 123"));
+        assertTrue(combined.contains("In lowercase: 123"));
+        assertTrue(combined.contains("Numeric value: 123"));
+        assertTrue(combined.contains("After multiplication by 2: 246"));
     }
 }

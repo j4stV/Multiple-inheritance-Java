@@ -10,44 +10,44 @@ import java.io.File;
 import static org.junit.Assert.*;
 
 /**
- * Тест для проверки циклического наследования (A -> B -> C -> A)
- * Проверяет правильность обработки циклических зависимостей
- * и корректное обнаружение циклов в топологической сортировке
+ * Test for checking cyclic inheritance (A -> B -> C -> A)
+ * Verifies the correct processing of cyclic dependencies
+ * and proper detection of cycles in topological sorting
  */
 public class CyclicInheritanceTest {
     
     @Before
     public void setUp() {
-        // Отключаем вывод отладочной информации
+        // Disable debug output
         MixinFactory.setDebugEnabled(false);
-        // Очищаем кэш инстансов перед тестом
+        // Clear instance cache before test
         MixinFactory.clearCache();
     }
     
     @After
     public void tearDown() {
-        // Удаляем сгенерированные файлы после тестов
+        // Delete generated files after tests
         cleanupGeneratedFiles();
     }
     
     @Test
     public void testCyclicInheritance() {
         try {
-            // Попытка создать экземпляр класса A с циклической зависимостью
+            // Attempt to create an instance of class A with cyclic dependency
             ClassA instanceA = MixinFactory.createInstance(ClassA.class);
-            fail("Должна быть выброшена ошибка о циклической зависимости");
+            fail("An error about cyclic dependency should be thrown");
         } catch (RuntimeException e) {
-            // Проверяем, что выброшено исключение с правильным сообщением
-            assertTrue("Сообщение об ошибке должно содержать информацию о циклической зависимости", 
-                    e.getMessage().contains("цикл") || e.getMessage().contains("cyclic"));
+            // Check that the exception has the correct message
+            assertTrue("Error message should contain information about cyclic dependency", 
+                    e.getMessage().contains("cycle") || e.getMessage().contains("cyclic"));
         }
     }
     
     /**
-     * Удаление сгенерированных файлов
+     * Delete generated files
      */
     private void cleanupGeneratedFiles() {
-        // Удаляем сгенерированные файлы с расширением .class
+        // Delete generated files with .class extension
         File generatedDir = new File("generated");
         if (generatedDir.exists() && generatedDir.isDirectory()) {
             File[] files = generatedDir.listFiles();

@@ -3,13 +3,13 @@ package example.diamond;
 import inheritance.annotations.Root;
 
 /**
- * Корневой интерфейс с меткой @Root для генерации базового класса
+ * Root interface with @Root mark for base class generation
  */
 @Root
 public interface SomeInterface {
     
     /**
-     * Основной метод интерфейса, который будет реализован во всех классах
+     * Main interface method that will be implemented in all classes
      */
     void method();
 } 

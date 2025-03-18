@@ -3,31 +3,31 @@ package example.diamond;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс B - первый класс в ромбовидной иерархии наследования
+ * Class B - first class in the diamond inheritance hierarchy
  */
 @Mixin(A.class)
 public class B extends SomeInterfaceRoot {
     
     @Override
     public void method() {
-        System.out.println("B.method(): Начало выполнения");
+        System.out.println("B.method(): Execution start");
         
-        // Вызываем метод через цепочку наследования
+        // Call method through inheritance chain
         nextMethod();
         
-        System.out.println("B.method(): Конец выполнения");
+        System.out.println("B.method(): Execution end");
     }
     
     /**
-     * Уникальный метод класса B
+     * Unique method of class B
      */
     public void methodB() {
-        System.out.println("B.methodB(): Выполнение уникального метода класса B");
+        System.out.println("B.methodB(): Executing unique method of class B");
     }
     
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;

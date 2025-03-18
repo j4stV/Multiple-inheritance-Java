@@ -3,7 +3,7 @@ package inheritance.tests.topological;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс D - зависит от классов B и C, образуя ромбовидное наследование
+ * Class D - depends on classes B and C, forming a diamond inheritance
  */
 @Mixin({NodeB.class, NodeC.class})
 public class NodeD extends TopologicalInterfaceRoot {
@@ -20,7 +20,7 @@ public class NodeD extends TopologicalInterfaceRoot {
     }
     
     /**
-     * Сбрасывает счетчик порядка посещения узлов
+     * Resets the node visit order counter
      */
     public static void resetVisitOrder() {
         visitOrder = 0;

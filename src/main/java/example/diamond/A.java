@@ -1,7 +1,7 @@
 package example.diamond;
 
 /**
- * Базовый класс A - основа для ромбовидного наследования
+ * Base class A - foundation for diamond inheritance
  */
 public class A extends SomeInterfaceRoot {
     private int value = 0;
@@ -16,13 +16,13 @@ public class A extends SomeInterfaceRoot {
     public void method() {
         System.out.println(value);
 
-        System.out.println("A.method(): Выполнение метода в базовом классе");
+        System.out.println("A.method(): Executing method in base class");
         nextMethod();
     }
     
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;

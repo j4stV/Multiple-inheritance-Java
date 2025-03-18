@@ -3,14 +3,14 @@ package inheritance.tests.repeatedAncestor;
 import inheritance.annotations.Root;
 
 /**
- * Корневой интерфейс для теста с повторяющимся предком
- * Помечен аннотацией @Root для генерации базового класса
+ * Root interface for test with repeated ancestor
+ * Marked with @Root annotation for base class generation
  */
 @Root
 public interface RepeatedAncestorInterface {
     /**
-     * Тестовый метод для проверки цепочки наследования
-     * @return Строка, представляющая порядок выполнения метода через цепочку наследования
+     * Test method for checking inheritance chain
+     * @return String representing the order of method execution through inheritance chain
      */
     String testMethod();
 } 

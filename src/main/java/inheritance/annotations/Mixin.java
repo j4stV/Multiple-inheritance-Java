@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Аннотация, указывающая родительские классы для множественного наследования
+ * Annotation that specifies parent classes for multiple inheritance
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Mixin {
     /**
-     * Список классов-родителей
+     * List of parent classes
      */
     Class<?>[] value();
 } 

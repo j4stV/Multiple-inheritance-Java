@@ -1,8 +1,8 @@
 package inheritance.tests.topological;
 
 /**
- * Начальный класс в циклической зависимости
- * X -> Z -> Y -> X (циклическая зависимость)
+ * Initial class in a cyclic dependency
+ * X -> Z -> Y -> X (cyclic dependency)
  */
 public class CyclicNodeX extends TopologicalInterfaceRoot {
     private static int visitOrder = 0;
@@ -18,7 +18,7 @@ public class CyclicNodeX extends TopologicalInterfaceRoot {
     }
     
     /**
-     * Сбрасывает счетчик порядка посещения узлов
+     * Resets the node visit order counter
      */
     public static void resetVisitOrder() {
         visitOrder = 0;

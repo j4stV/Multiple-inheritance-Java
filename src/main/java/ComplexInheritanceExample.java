@@ -1,78 +1,78 @@
 import example.diamond.*;
 
 /**
- * Пример демонстрации сложного множественного наследования
- * с классом F, наследующимся от D и A одновременно
+ * Example demonstrating complex multiple inheritance
+ * with class F inheriting from both D and A simultaneously
  */
 public class ComplexInheritanceExample {
     
     public static void main(String[] args) {
-        System.out.println("=== Демонстрация сложного множественного наследования ===");
+        System.out.println("=== Complex Multiple Inheritance Demonstration ===");
         
         try {
-            // Создаем экземпляр класса F
-            System.out.println("Создание экземпляра класса F...");
+            // Create an instance of class F
+            System.out.println("Creating an instance of class F...");
             F f = SomeInterfaceRoot.createInstance(F.class);
-            System.out.println("Экземпляр класса F создан успешно.");
+            System.out.println("Instance of class F created successfully.");
             
-            // Проверяем интерфейсы и типы
-            System.out.println("\nПроверка интерфейсов и типов:");
+            // Check interfaces and types
+            System.out.println("\nChecking interfaces and types:");
             System.out.println("f instanceof SomeInterface: " + (f instanceof SomeInterface));
             System.out.println("f instanceof F: " + (f instanceof F));
-            // Примечание: f не будет экземпляром D, так как в Java нет прямого наследования типов
+            // Note: f will not be an instance of D since Java doesn't have direct type inheritance
             
-            // Вызываем методы
-            System.out.println("\nВызов методов:");
-            System.out.println("Вызов метода f.method():");
+            // Call methods
+            System.out.println("\nCalling methods:");
+            System.out.println("Calling method f.method():");
             f.method();
             
-            System.out.println("\nВызов уникального метода f.methodF():");
+            System.out.println("\nCalling unique method f.methodF():");
             f.methodF();
             
-            // Отображаем структуру наследования
+            // Display inheritance structure
 
             
-            // Исследуем структуру наследования через рефлексию
+            // Explore inheritance structure through reflection
             
         } catch (Exception e) {
-            System.out.println("Ошибка при выполнении: " + e.getMessage());
+            System.out.println("Error during execution: " + e.getMessage());
             e.printStackTrace();
         }
         
-        System.out.println("\n=== Демонстрация завершена ===");
+        System.out.println("\n=== Demonstration completed ===");
     }
     
     /**
-     * Исследует структуру наследования объекта через рефлексию
-     * @param f объект для исследования
+     * Examines the inheritance structure of an object through reflection
+     * @param f object to examine
      */
     private static void examineInheritanceStructure(F f) {
         try {
-            // Получаем первого родителя - должен быть D
+            // Get the first parent - should be D
             java.lang.reflect.Field parentField = f.getClass().getSuperclass().getDeclaredField("parent");
             parentField.setAccessible(true);
             Object firstParent = parentField.get(f);
             
-            System.out.println("Первый родитель F: " + 
+            System.out.println("First parent of F: " + 
                     (firstParent != null ? firstParent.getClass().getName() : "null"));
             
             if (firstParent != null) {
-                // Получаем второго родителя - должен быть A (или null, если его нет)
+                // Get the second parent - should be A (or null if none)
                 java.lang.reflect.Field nextParentField = firstParent.getClass().getSuperclass().getDeclaredField("parent");
                 nextParentField.setAccessible(true);
                 Object secondParent = nextParentField.get(firstParent);
                 
-                System.out.println("Второй родитель: " + 
+                System.out.println("Second parent: " + 
                         (secondParent != null ? secondParent.getClass().getName() : "null"));
                 
-                // Если F наследуется от D, которое имеет сложную цепочку наследования,
-                // то мы увидим более глубокую структуру наследования
+                // If F inherits from D, which has a complex inheritance chain,
+                // we'll see a deeper inheritance structure
                 if (secondParent != null) {
                     java.lang.reflect.Field thirdParentField = secondParent.getClass().getSuperclass().getDeclaredField("parent");
                     thirdParentField.setAccessible(true);
                     Object thirdParent = thirdParentField.get(secondParent);
                     
-                    System.out.println("Третий родитель: " + 
+                    System.out.println("Third parent: " + 
                             (thirdParent != null ? thirdParent.getClass().getName() : "null"));
                     
                     if (thirdParent != null) {
@@ -80,7 +80,7 @@ public class ComplexInheritanceExample {
                         fourthParentField.setAccessible(true);
                         Object fourthParent = fourthParentField.get(thirdParent);
                         
-                        System.out.println("Четвертый родитель: " + 
+                        System.out.println("Fourth parent: " + 
                                 (fourthParent != null ? fourthParent.getClass().getName() : "null"));
                         
                         if (fourthParent != null) {
@@ -88,14 +88,14 @@ public class ComplexInheritanceExample {
                             fifthParentField.setAccessible(true);
                             Object fifthParent = fifthParentField.get(fourthParent);
                             
-                            System.out.println("Пятый родитель: " + 
+                            System.out.println("Fifth parent: " + 
                                     (fifthParent != null ? fifthParent.getClass().getName() : "null"));
                         }
                     }
                 }
             }
         } catch (Exception e) {
-            System.out.println("Ошибка при исследовании структуры наследования: " + e.getMessage());
+            System.out.println("Error examining inheritance structure: " + e.getMessage());
         }
     }
 } 

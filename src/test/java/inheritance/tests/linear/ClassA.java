@@ -1,16 +1,16 @@
 package inheritance.tests.linear;
 
 /**
- * Базовый класс A для линейного наследования
- * Реализует интерфейс TestLinearInterface и служит началом цепочки наследования
+ * Base class A for linear inheritance
+ * Implements TestLinearInterface and serves as the beginning of inheritance chain
  */
 public class ClassA extends TestLinearInterfaceRoot {
     /**
-     * Реализация метода из интерфейса
-     * @return "A" - идентификатор класса
+     * Implementation of method from interface
+     * @return "A" - class identifier
      */
     public String testMethod() {
-        System.out.println("A.testMethod(): выполнение");
+        System.out.println("A.testMethod(): execution");
         return "A";
     }
 } 

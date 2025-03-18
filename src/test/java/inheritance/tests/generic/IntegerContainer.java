@@ -1,14 +1,14 @@
 package inheritance.tests.generic;
 
 /**
- * Класс, реализующий дженерик-интерфейс с типом Integer
- * Демонстрирует работу с другим типом данных
+ * Class implementing generic interface with Integer type
+ * Demonstrates working with a different data type
  */
 public class IntegerContainer extends GenericInterfaceRoot<Integer> {
     private Integer value;
     
     /**
-     * Возвращает текущее целочисленное значение
+     * Returns the current integer value
      */
     @Override
     public Integer getValue() {
@@ -16,7 +16,7 @@ public class IntegerContainer extends GenericInterfaceRoot<Integer> {
     }
     
     /**
-     * Устанавливает новое целочисленное значение
+     * Sets a new integer value
      */
     @Override
     public void setValue(Integer value) {
@@ -24,17 +24,17 @@ public class IntegerContainer extends GenericInterfaceRoot<Integer> {
     }
     
     /**
-     * Трансформирует значение, добавляя указанный префикс
+     * Transforms the value by adding the specified prefix
      */
     @Override
     public String transformValue(String prefix) {
-        return prefix + " (число): " + (value != null ? value : "null");
+        return prefix + " (number): " + (value != null ? value : "null");
     }
     
     /**
-     * Дополнительный метод для работы с числовыми значениями
-     * @param multiplier Множитель
-     * @return Результат умножения текущего значения на множитель
+     * Additional method for working with numeric values
+     * @param multiplier Multiplier
+     * @return Result of multiplying current value by the multiplier
      */
     public Integer multiply(int multiplier) {
         return value != null ? value * multiplier : null;

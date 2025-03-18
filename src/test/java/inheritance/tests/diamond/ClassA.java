@@ -1,22 +1,22 @@
 package inheritance.tests.diamond;
 
 /**
- * Базовый класс A для ромбовидного наследования
- * Служит началом иерархии наследования
+ * Base class A for diamond inheritance
+ * Serves as the beginning of inheritance hierarchy
  */
 public class ClassA extends DiamondInterfaceRoot {
     /**
-     * Реализация метода из интерфейса
-     * @return "A" - идентификатор класса
+     * Implementation of method from interface
+     * @return "A" - class identifier
      */
     public String testMethod() {
-        System.out.println("A.testMethod(): выполнение");
+        System.out.println("A.testMethod(): execution");
         return "A";
     }
     
     /**
-     * Получает родительский объект
-     * @return Родительский объект
+     * Gets the parent object
+     * @return Parent object
      */
     public Object getParent() {
         return parent;
