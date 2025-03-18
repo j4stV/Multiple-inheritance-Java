@@ -84,46 +84,6 @@ if errorlevel 1 (
   exit /b 1
 )
 
-REM Compile test class
-echo Compiling test class...
-javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/DiamondTest.java
-if errorlevel 1 (
-  echo Error compiling test class
-  exit /b 1
-)
-
-REM Compile simple test class
-echo Compiling simple test class...
-javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/SimpleTest.java
-if errorlevel 1 (
-  echo Error compiling simple test class
-  exit /b 1
-)
-
-REM Compile complex inheritance example
-echo Compiling complex inheritance example...
-javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/ComplexInheritanceExample.java
-if errorlevel 1 (
-  echo Error compiling complex inheritance example
-  exit /b 1
-)
-
-REM Compile inheritance structure demo
-echo Compiling inheritance structure demo...
-javac -d bin -cp bin src/main/java/InheritanceStructureDemo.java
-if errorlevel 1 (
-  echo Error compiling inheritance structure demo
-  exit /b 1
-)
-
-REM Compile method inheritance demo
-echo Compiling method inheritance demo...
-javac -d bin -cp bin src/main/java/MethodInheritanceDemo.java
-if errorlevel 1 (
-  echo Error compiling method inheritance demo
-  exit /b 1
-)
-
 REM Compile Main class
 echo Compiling Main class...
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/Main.java
@@ -134,7 +94,3 @@ if errorlevel 1 (
 
 echo Compilation completed successfully!
 echo Run 'java -cp bin Main' to execute the program
-echo Or run 'java -cp bin example.diamond.DiamondTest' to run the test
-echo Or run 'java -cp bin SimpleTest' to run the simple test
-echo Or run 'java -cp bin ComplexInheritanceExample' to run the complex inheritance example
-echo Or run 'java -cp bin MethodInheritanceDemo' to run the method inheritance demo
