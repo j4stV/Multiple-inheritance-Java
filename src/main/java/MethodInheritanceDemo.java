@@ -83,13 +83,13 @@ public class MethodInheritanceDemo {
         });
         
         // Call method from class A (accessible via f -> D -> B/C -> A)
-        testMethodAccess(f, "A.methodA()", () -> {
+        testMethodAccess(f, "A.method()", () -> {
             if (f.getParent() instanceof D) {
                 D d = (D) f.getParent();
                 if (d.getParent() instanceof B) {
                     B b = (B) d.getParent();
                     if (b.getParent() instanceof A) {
-                        ((A)b.getParent()).methodA();
+                        ((A)b.getParent()).method();
                     } else {
                         System.out.println("ERROR: A is not accessible from B");
                     }
