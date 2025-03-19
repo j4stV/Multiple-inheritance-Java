@@ -6,7 +6,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
-group = "com.java.multiple.inheritance"
+group = "com.github.j4stV"
 version = "1.0.0"
 description = "Java Multiple Inheritance Framework"
 
@@ -147,7 +147,7 @@ publishing {
             pom {
                 name.set("Java Multiple Inheritance")
                 description.set("A framework for implementing multiple inheritance in Java")
-                url.set("https://github.com/yourusername/java-multiple-inheritance")
+                url.set("https://github.com/j4stV/Multiple-inheritance-Java")
                 
                 licenses {
                     license {
@@ -158,16 +158,16 @@ publishing {
                 
                 developers {
                     developer {
-                        id.set("developer")
-                        name.set("Developer Name")
-                        email.set("developer@example.com")
+                        id.set("j4stV")
+                        name.set("j4stV")
+                        email.set("j4stV@github.com")
                     }
                 }
                 
                 scm {
-                    connection.set("scm:git:git://github.com/yourusername/java-multiple-inheritance.git")
-                    developerConnection.set("scm:git:ssh://github.com:yourusername/java-multiple-inheritance.git")
-                    url.set("https://github.com/yourusername/java-multiple-inheritance/tree/main")
+                    connection.set("scm:git:git://github.com/j4stV/Multiple-inheritance-Java.git")
+                    developerConnection.set("scm:git:ssh://github.com:j4stV/Multiple-inheritance-Java.git")
+                    url.set("https://github.com/j4stV/Multiple-inheritance-Java/tree/main")
                 }
             }
         }
@@ -178,25 +178,12 @@ publishing {
             name = "localRepo"
             url = uri("${buildDir}/repo")
         }
-        
-        // Для публикации в Maven Central понадобится дополнительная настройка
-        maven {
-            name = "mavenCentral"
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = project.findProperty("ossrhUsername") as String? ?: System.getenv("OSSRH_USERNAME")
-                password = project.findProperty("ossrhPassword") as String? ?: System.getenv("OSSRH_PASSWORD")
-            }
-        }
     }
 }
 
-// Настройка подписи артефактов для публикации в Maven Central
+// Настройка подписи артефактов (отключаем для JitPack)
 signing {
-    setRequired {
-        !project.version.toString().endsWith("SNAPSHOT") && gradle.taskGraph.hasTask("publish")
-    }
-    sign(publishing.publications["mavenJava"])
+    setRequired(false)
 }
 
 // Создание файла сервиса для процессора аннотаций
