@@ -294,3 +294,154 @@ src/main/java/
 ## License
 
 MIT License
+
+## Подключение фреймворка в проект
+
+### Gradle KTS
+
+```kotlin
+// Добавление Maven репозитория (если публикуете в Maven Central)
+repositories {
+    mavenCentral()
+    // Если у вас локальный репозиторий
+    // maven { url = uri("file:///path/to/local/repo") }
+}
+
+// Добавление зависимости
+dependencies {
+    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
+    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
+}
+```
+
+### Gradle Groovy
+
+```groovy
+// Добавление Maven репозитория (если публикуете в Maven Central)
+repositories {
+    mavenCentral()
+    // Если у вас локальный репозиторий
+    // maven { url 'file:///path/to/local/repo' }
+}
+
+// Добавление зависимости
+dependencies {
+    implementation 'com.java.multiple.inheritance:java-multiple-inheritance:1.0.0'
+    annotationProcessor 'com.java.multiple.inheritance:java-multiple-inheritance:1.0.0'
+}
+```
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>com.java.multiple.inheritance</groupId>
+    <artifactId>java-multiple-inheritance</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+## Инструкция по созданию локального репозитория
+
+Если вы не хотите публиковать фреймворк в Maven Central, вы можете создать локальный репозиторий:
+
+```bash
+# Сборка и публикация в локальный репозиторий
+./gradlew publishToMavenLocal
+```
+
+После этого JAR-файлы будут доступны в вашем локальном Maven репозитории (обычно ~/.m2/repository/).
+
+## Пример использования в проекте
+
+1. Создайте интерфейс и пометьте его аннотацией `@Root`:
+
+```java
+import inheritance.annotations.Root;
+
+@Root
+public interface MyInterface {
+    void someMethod();
+}
+```
+
+2. Реализуйте базовый класс, расширяющий сгенерированный `MyInterfaceRoot`:
+
+```java
+public class BaseClass extends MyInterfaceRoot {
+    @Override
+    public void someMethod() {
+        System.out.println("BaseClass implementation");
+        nextSomeMethod(); // Вызываем метод следующего в цепочке
+    }
+}
+```
+
+3. Создайте класс с множественным наследованием используя аннотацию `@Mixin`:
+
+```java
+import inheritance.annotations.Mixin;
+
+@Mixin({BaseClass.class, OtherClass.class})
+public class MultiInheritClass extends MyInterfaceRoot {
+    @Override
+    public void someMethod() {
+        System.out.println("MultiInheritClass starting");
+        nextSomeMethod(); // Перенаправляем вызов к родительским классам
+        System.out.println("MultiInheritClass ending");
+    }
+}
+```
+
+4. Создайте экземпляр с помощью фабрики:
+
+```java
+import inheritance.factory.MixinFactory;
+
+public class Main {
+    public static void main(String[] args) {
+        // Создаем экземпляр класса с множественным наследованием
+        MultiInheritClass instance = MixinFactory.createInstance(MultiInheritClass.class);
+        
+        // Вызываем метод, который будет выполнен по цепочке наследования
+        instance.someMethod();
+    }
+}
+```
+
+## Сборка и установка фреймворка
+
+Для сборки фреймворка с использованием Gradle выполните:
+
+```bash
+# Клонирование репозитория
+git clone https://github.com/yourusername/java-multiple-inheritance.git
+cd java-multiple-inheritance
+
+# Сборка фреймворка
+./gradlew build
+
+# Публикация в локальный Maven репозиторий
+./gradlew publishToMavenLocal
+```
+
+После публикации фреймворк можно подключить в других проектах через систему сборки:
+
+```kotlin
+// build.gradle.kts (Kotlin DSL)
+dependencies {
+    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
+    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
+}
+```
+
+## Примеры использования
+
+В директории `examples/simple-project` находится пример использования фреймворка для создания класса `Amphibian` с множественным наследованием от `Car` и `Boat`.
+
+Для запуска примера:
+
+```bash
+cd examples/simple-project
+./gradlew run
+```
