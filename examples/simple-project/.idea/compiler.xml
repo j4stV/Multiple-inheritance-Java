@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Gradle Imported" enabled="true">
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.j4stV/Multiple-inheritance-Java/v1.0.1/15f6d5f7679e5ddeb505f29a74001f0151fa9fc4/Multiple-inheritance-Java-v1.0.1.jar" />
+        </processorPath>
+        <module name="multiple-inheritance-example.main" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="11" />
+  </component>
+</project>

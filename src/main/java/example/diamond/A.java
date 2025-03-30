@@ -7,6 +7,7 @@ public class A extends SomeInterfaceRoot {
     private int value = 0;
 
     public A() {
+        nextMethod();
         System.out.println("A created");
         value++;
     }

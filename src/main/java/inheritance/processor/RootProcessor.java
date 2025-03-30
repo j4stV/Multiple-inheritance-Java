@@ -73,6 +73,7 @@ public class RootProcessor extends AbstractProcessor {
             out.println("import inheritance.annotations.Mixin;");
             out.println("import inheritance.factory.MixinFactory;");
             out.println("import java.lang.reflect.Method;");
+            out.println("import java.lang.reflect.Constructor;");
             out.println("import java.lang.reflect.InvocationTargetException;");
             out.println("import java.lang.reflect.Type;");
             out.println("import java.lang.reflect.ParameterizedType;");
@@ -115,6 +116,28 @@ public class RootProcessor extends AbstractProcessor {
             out.println("        // Initialization is performed by MixinFactory");
             out.println("    }");
             out.println();
+            
+            // Добавляем метод nextConstructor для передачи параметров конструктора родительскому классу
+            out.println("    /**");
+            out.println("     * Передает параметры конструктора родительскому классу");
+            out.println("     * Аналогичен super(...) в других языках программирования");
+            out.println("     * @param args Аргументы для передачи конструктору родительского класса");
+            out.println("     */");
+            out.println("    protected void nextConstructor(Object... args) {");
+            out.println("        if (parent == null) {");
+            out.println("            return;");
+            out.println("        }");
+            out.println("        try {");
+            out.println("            // Сохраняем аргументы для родительского класса в фабрике");
+            out.println("            if (args.length > 0) {");
+            out.println("                Class<?> parentClass = parent.getClass();");
+            out.println("                MixinFactory.storeConstructorArgs(parentClass, args);");
+            out.println("            }");
+            out.println("        } catch (Exception e) {");
+            out.println("            throw new RuntimeException(\"Error calling parent constructor\", e);");
+            out.println("        }");
+            out.println("    }");
+            out.println();
 
             // Static method for creating instances through the factory
             out.println("    /**");
@@ -125,6 +148,19 @@ public class RootProcessor extends AbstractProcessor {
             out.println("     */");
             out.println("    public static <T> T createInstance(Class<T> clazz) {");
             out.println("        return MixinFactory.createInstance(clazz);");
+            out.println("    }");
+            out.println();
+
+            // Add method for creating instances with constructor arguments
+            out.println("    /**");
+            out.println("     * Creates an instance of the class through MixinFactory with constructor arguments");
+            out.println("     * @param clazz Class to create an instance of");
+            out.println("     * @param args Constructor arguments");
+            out.println("     * @param <T> Type of instance being created");
+            out.println("     * @return Configured instance of the class");
+            out.println("     */");
+            out.println("    public static <T> T createInstance(Class<T> clazz, Object... args) {");
+            out.println("        return MixinFactory.createInstance(clazz, args);");
             out.println("    }");
             out.println();
 

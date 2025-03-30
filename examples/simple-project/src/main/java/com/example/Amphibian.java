@@ -12,13 +12,13 @@ public class Amphibian extends VehicleRoot {
     @Override
     public void startEngine() {
         System.out.println("Amphibian: Starting combined engine system");
-        nextStartEngine(); // Вызывает методы родительских классов в порядке топологической сортировки
+        nextStartEngine();
     }
     
     @Override
     public void stopEngine() {
         System.out.println("Amphibian: Stopping combined engine system");
-        nextStopEngine(); // Вызывает методы родительских классов в порядке топологической сортировки
+        nextStopEngine();
     }
     
     @Override

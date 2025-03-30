@@ -8,15 +8,12 @@ import inheritance.factory.MixinFactory;
 public class Main {
     public static void main(String[] args) {
         System.out.println("=== Java Multiple Inheritance Demo ===");
-        
-        // Включаем отладочный вывод фабрики
+
         MixinFactory.setDebugEnabled(true);
-        
-        // Создаем экземпляр амфибии с множественным наследованием
+
         System.out.println("\n=== Creating Amphibian instance ===");
         Amphibian amphibian = MixinFactory.createInstance(Amphibian.class);
-        
-        // Демонстрация вызова цепочки методов
+
         System.out.println("\n=== Starting engine ===");
         amphibian.startEngine();
         
@@ -34,8 +31,7 @@ public class Main {
         
         System.out.println("\n=== Stopping engine ===");
         amphibian.stopEngine();
-        
-        // Пример создания обычных классов для сравнения
+
         System.out.println("\n=== Creating Car instance ===");
         Car car = MixinFactory.createInstance(Car.class);
         car.startEngine();

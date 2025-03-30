@@ -120,6 +120,43 @@ if "%TEST_TO_RUN%"=="linear" (
     
     echo Running diamond inheritance test...
     java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.diamond.DiamondInheritanceTest
+) else if "%TEST_TO_RUN%"=="constructor" (
+    REM Compile and run constructor tests
+    echo Compiling interface for constructor tests...
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/constructor/ConstructorInterface.java
+    if errorlevel 1 (
+        echo Error compiling interface for constructor tests
+        exit /b 1
+    )
+    
+    echo Compiling classes for constructor tests...
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/constructor/BaseClass.java
+    if errorlevel 1 (
+        echo Error compiling BaseClass
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/constructor/ChildClass.java
+    if errorlevel 1 (
+        echo Error compiling ChildClass
+        exit /b 1
+    )
+    
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/constructor/BadChildClass.java
+    if errorlevel 1 (
+        echo Error compiling BadChildClass
+        exit /b 1
+    )
+    
+    echo Compiling constructor test...
+    javac -d %TEST_CLASSES% -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/constructor/ConstructorTest.java
+    if errorlevel 1 (
+        echo Error compiling constructor test
+        exit /b 1
+    )
+    
+    echo Running constructor test...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.constructor.ConstructorTest
 ) else if "%TEST_TO_RUN%"=="cyclic" (
     REM Compile and run cyclic inheritance tests
     echo Compiling interface for cyclic inheritance...
@@ -355,6 +392,17 @@ if "%TEST_TO_RUN%"=="linear" (
     
     echo Running diamond inheritance test...
     java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.diamond.DiamondInheritanceTest
+    
+    REM Constructor test
+    echo Compiling classes for constructor tests...
+    javac -d %TEST_CLASSES% -cp %MAIN_CLASSES%;%JUNIT_PATH% src/test/java/inheritance/tests/constructor/*.java
+    if errorlevel 1 (
+        echo Error compiling classes for constructor tests
+        exit /b 1
+    )
+    
+    echo Running constructor test...
+    java -cp %TEST_CLASSES%;%MAIN_CLASSES%;%JUNIT_PATH% org.junit.runner.JUnitCore inheritance.tests.constructor.ConstructorTest
     
     REM Cyclic inheritance
     echo Compiling classes for cyclic inheritance...
