@@ -86,19 +86,27 @@ public class MixedTypeContainer extends GenericInterfaceRoot<String> {
     public String getCombinedInfo(int multiplier) {
         String lowerCase = "";
         
-        // Call parent class method if parent is EnhancedStringContainer
+        // Если у нас есть строковое значение, преобразуем его в нижний регистр
+        // Это имитирует поведение метода getLowerCaseValue() класса EnhancedStringContainer
+        if (stringValue != null) {
+            lowerCase = stringValue.toLowerCase();
+        }
+        
+        // Пытаемся получить значение через родителя, если это возможно
         if (parent instanceof EnhancedStringContainer) {
             EnhancedStringContainer enhancedParent = (EnhancedStringContainer) parent;
+            // Устанавливаем значение в родителе, чтобы убедиться, что оно синхронизировано
+            enhancedParent.setValue(stringValue);
             lowerCase = enhancedParent.getLowerCaseValue();
         }
         
-        // Form string with information
+        // Формируем строку с информацией
         StringBuilder result = new StringBuilder();
         result.append("Text: ").append(getValue());
         result.append(", In lowercase: ").append(lowerCase);
         
         if (numericValue != null) {
-            // Calculate product
+            // Вычисляем произведение
             Integer multiplied = numericValue * multiplier;
             result.append(", Numeric value: ").append(numericValue);
             result.append(", After multiplication by ").append(multiplier).append(": ").append(multiplied);
