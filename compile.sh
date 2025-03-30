@@ -1,11 +1,11 @@
 #!/bin/bash
 echo "=== Diamond inheritance project compilation script ==="
 
-# Очистка и создание директорий
+# Clean up and create directories
 rm -rf bin
 mkdir -p bin
 
-# Компилируем аннотации
+# Compile annotations
 echo "Compiling annotations..."
 javac -d bin src/main/java/inheritance/annotations/Root.java src/main/java/inheritance/annotations/Mixin.java
 if [ $? -ne 0 ]; then
@@ -13,7 +13,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем процессор аннотаций
+# Compile annotation processor
 echo "Compiling annotation processor..."
 javac -d bin -cp bin src/main/java/inheritance/processor/RootProcessor.java
 if [ $? -ne 0 ]; then
@@ -21,13 +21,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Создаем директории для файла сервиса
+# Create directories for service file
 mkdir -p bin/META-INF/services
 
-# Создаем файл сервиса для процессора аннотаций
+# Create service file for annotation processor
 echo "inheritance.processor.RootProcessor" > bin/META-INF/services/javax.annotation.processing.Processor
 
-# Компилируем фабрику
+# Compile factory
 echo "Compiling factory..."
 javac -d bin -cp bin src/main/java/inheritance/factory/MixinFactory.java
 if [ $? -ne 0 ]; then
@@ -35,7 +35,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем корневой интерфейс
+# Compile root interface
 echo "Compiling root interface..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/SomeInterface.java
 if [ $? -ne 0 ]; then
@@ -43,7 +43,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем класс A
+# Compile class A
 echo "Compiling class A..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/A.java
 if [ $? -ne 0 ]; then
@@ -51,7 +51,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем классы B и C
+# Compile classes B and C
 echo "Compiling classes B and C..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/B.java src/main/java/example/diamond/C.java
 if [ $? -ne 0 ]; then
@@ -59,7 +59,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем класс E
+# Compile class E
 echo "Compiling class E..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/E.java
 if [ $? -ne 0 ]; then
@@ -67,7 +67,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем класс D
+# Compile class D
 echo "Compiling class D..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/D.java
 if [ $? -ne 0 ]; then
@@ -75,7 +75,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем класс F
+# Compile class F
 echo "Compiling class F..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/example/diamond/F.java
 if [ $? -ne 0 ]; then
@@ -83,7 +83,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Компилируем класс Main
+# Compile Main class
 echo "Compiling Main class..."
 javac -d bin -cp bin -processor inheritance.processor.RootProcessor src/main/java/Main.java
 if [ $? -ne 0 ]; then

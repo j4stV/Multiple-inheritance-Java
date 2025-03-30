@@ -3,22 +3,22 @@ package com.example;
 import inheritance.annotations.Root;
 
 /**
- * Корневой интерфейс для демонстрации множественного наследования
+ * Root interface for multiple inheritance demonstration
  */
 @Root
 public interface Vehicle {
     /**
-     * Метод для запуска двигателя
+     * Method to start the engine
      */
     void startEngine();
     
     /**
-     * Метод для остановки двигателя
+     * Method to stop the engine
      */
     void stopEngine();
     
     /**
-     * Метод для движения
+     * Method for moving
      */
     void move();
 } 

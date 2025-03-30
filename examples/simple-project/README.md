@@ -1,36 +1,19 @@
-# Multiple Inheritance Example
+# Simple Project Example
 
-Этот проект демонстрирует использование фреймворка Java Multiple Inheritance.
+This project demonstrates the use of the Java Multiple Inheritance framework.
 
-## Структура проекта
+## Project Structure
 
-- `Vehicle.java` - корневой интерфейс, помеченный аннотацией `@Root`
-- `Car.java` - базовый класс автомобиля
-- `Boat.java` - базовый класс лодки
-- `Amphibian.java` - класс с множественным наследованием от `Car` и `Boat`
-- `Main.java` - точка входа в приложение с демонстрацией работы
+- `com.example.Vehicle` - root interface marked with `@Root` annotation
+- `com.example.Car` - base class for car (extends generated `VehicleRoot`)
+- `com.example.Boat` - base class for boat (extends generated `VehicleRoot`)
+- `com.example.Amphibian` - class with multiple inheritance, using `@Mixin({Car.class, Boat.class})`
+- `com.example.Main` - demo application
 
-## Запуск примера
-
-Для запуска примера необходимо сначала опубликовать основной фреймворк в локальный репозиторий Maven:
+## Running the Example
 
 ```bash
-# В корне основного проекта (java-multiple-inheritance)
-./gradlew publishToMavenLocal
-```
-
-Затем запустите пример:
-
-```bash
-# В директории simple-project
 ./gradlew run
 ```
 
-## Что демонстрирует пример
-
-1. Создание корневого интерфейса с аннотацией `@Root`
-2. Создание базовых классов, наследующих от сгенерированного `VehicleRoot`
-3. Создание класса с множественным наследованием с аннотацией `@Mixin`
-4. Создание экземпляров классов через `MixinFactory`
-5. Вызов методов по цепочке наследования
-6. Доступ к родительским объектам через поле `parent` 
+This will compile the project and run the `Main` class, which creates an instance of `Amphibian` using `MixinFactory` and demonstrates multiple inheritance by calling methods that are executed along the inheritance chain. 

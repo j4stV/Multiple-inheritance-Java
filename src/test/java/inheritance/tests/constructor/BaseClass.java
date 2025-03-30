@@ -7,13 +7,6 @@ public class BaseClass extends ConstructorInterfaceRoot {
     protected String value;
     
     /**
-     * Default constructor
-     */
-    public BaseClass() {
-        this.value = "default";
-    }
-    
-    /**
      * Constructor with parameter
      * @param value value to store
      */

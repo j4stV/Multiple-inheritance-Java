@@ -117,18 +117,18 @@ public class RootProcessor extends AbstractProcessor {
             out.println("    }");
             out.println();
             
-            // Добавляем метод nextConstructor для передачи параметров конструктора родительскому классу
+            // Add nextConstructor method for passing constructor parameters to parent class
             out.println("    /**");
-            out.println("     * Передает параметры конструктора родительскому классу");
-            out.println("     * Аналогичен super(...) в других языках программирования");
-            out.println("     * @param args Аргументы для передачи конструктору родительского класса");
+            out.println("     * Passes constructor parameters to parent class");
+            out.println("     * Similar to super(...) in other programming languages");
+            out.println("     * @param args Arguments to pass to parent class constructor");
             out.println("     */");
             out.println("    protected void nextConstructor(Object... args) {");
             out.println("        if (parent == null) {");
             out.println("            return;");
             out.println("        }");
             out.println("        try {");
-            out.println("            // Сохраняем аргументы для родительского класса в фабрике");
+            out.println("            // Save arguments for parent class in factory");
             out.println("            if (args.length > 0) {");
             out.println("                Class<?> parentClass = parent.getClass();");
             out.println("                MixinFactory.storeConstructorArgs(parentClass, args);");

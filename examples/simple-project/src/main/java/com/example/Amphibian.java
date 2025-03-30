@@ -3,7 +3,7 @@ package com.example;
 import inheritance.annotations.Mixin;
 
 /**
- * Класс транспортного средства-амфибии с наследованием от Car и Boat
+ * Amphibious vehicle class with inheritance from Car and Boat
  */
 @Mixin({Car.class, Boat.class})
 public class Amphibian extends VehicleRoot {
@@ -24,11 +24,11 @@ public class Amphibian extends VehicleRoot {
     @Override
     public void move() {
         System.out.println("Amphibian: Moving in " + (isInWaterMode ? "water" : "land") + " mode");
-        nextMove(); // Вызывает методы родительских классов в порядке топологической сортировки
+        nextMove(); // Calls parent class methods in topological sort order
     }
     
     /**
-     * Метод для переключения режима (вода/суша)
+     * Method for switching mode (water/land)
      */
     public void switchMode() {
         isInWaterMode = !isInWaterMode;
@@ -36,18 +36,18 @@ public class Amphibian extends VehicleRoot {
     }
     
     /**
-     * Метод для доступа к специфичным методам родительских классов
+     * Method for accessing specific methods of parent classes
      */
     public void useSpecificFeatures() {
-        // Проверяем и вызываем методы Car
+        // Check and call Car methods
         if (parent instanceof Car) {
             ((Car) parent).honk();
         } else if (parent instanceof Boat) {
             ((Boat) parent).sail();
         }
         
-        // Для полного примера с цепочкой Amphibian -> Car -> Boat
-        // могло бы понадобиться получить "parent of parent"
+        // For a complete example with the chain Amphibian -> Car -> Boat
+        // it might be necessary to get "parent of parent"
         if (parent != null && parent instanceof Car) {
             Car car = (Car) parent;
             if (car.parent instanceof Boat) {

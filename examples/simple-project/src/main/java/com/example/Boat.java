@@ -1,7 +1,7 @@
 package com.example;
 
 /**
- * Класс лодки
+ * Boat class
  */
 public class Boat extends VehicleRoot {
     private boolean engineRunning = false;
@@ -10,14 +10,14 @@ public class Boat extends VehicleRoot {
     public void startEngine() {
         System.out.println("Boat: Starting engine");
         engineRunning = true;
-        nextStartEngine(); // Вызывает метод следующего класса в цепочке
+        nextStartEngine(); // Call the next class method in the chain
     }
     
     @Override
     public void stopEngine() {
         System.out.println("Boat: Stopping engine");
         engineRunning = false;
-        nextStopEngine(); // Вызывает метод следующего класса в цепочке
+        nextStopEngine(); // Call the next class method in the chain
     }
     
     @Override
@@ -27,11 +27,11 @@ public class Boat extends VehicleRoot {
         } else {
             System.out.println("Boat: Cannot sail, engine is off");
         }
-        nextMove(); // Вызывает метод следующего класса в цепочке
+        nextMove(); // Call the next class method in the chain
     }
     
     /**
-     * Метод, специфичный для лодки
+     * Method specific to the boat
      */
     public void sail() {
         System.out.println("Boat: Setting sails");

@@ -3,7 +3,7 @@ package com.example;
 import inheritance.factory.MixinFactory;
 
 /**
- * Главный класс для демонстрации множественного наследования
+ * Main class for multiple inheritance demonstration
  */
 public class Main {
     public static void main(String[] args) {

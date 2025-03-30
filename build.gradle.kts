@@ -29,7 +29,7 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 }
 
-// Конфигурация для корректной обработки аннотаций
+// Configuration for proper annotation processing
 tasks.register<JavaCompile>("compileAnnotations") {
     source = fileTree("src/main/java/inheritance/annotations")
     destinationDirectory.set(file("${buildDir}/classes/java/annotations"))
@@ -43,7 +43,7 @@ tasks.register<JavaCompile>("compileProcessor") {
     dependsOn("compileAnnotations")
 }
 
-// Генерация файла сервиса для процессора аннотаций
+// Service file generation for annotation processor
 tasks.register<Copy>("generateServiceFile") {
     from("src/main/resources")
     into("${buildDir}/classes/java/processor/META-INF/services")
@@ -53,24 +53,24 @@ tasks.register<Copy>("generateServiceFile") {
     }
 }
 
-// Настройка основной компиляции
+// Main compilation settings
 tasks.named<JavaCompile>("compileJava") {
     dependsOn("compileAnnotations", "compileProcessor", "generateServiceFile")
     
-    // Включаем скомпилированные файлы в classpath
+    // Include compiled files in classpath
     classpath = files(
         "${buildDir}/classes/java/annotations",
         "${buildDir}/classes/java/processor",
         configurations.compileClasspath
     )
     
-    // Обеспечиваем, чтобы компиляция не перетирала аннотации и процессор
+    // Ensure that compilation doesn't overwrite annotations and processor
     options.annotationProcessorPath = files(
         "${buildDir}/classes/java/annotations",
         "${buildDir}/classes/java/processor"
     )
     
-    // Исключаем классы примеров из основной компиляции
+    // Exclude example classes from main compilation
     exclude("example/**")
     exclude("**/Main.java")
 }
@@ -78,52 +78,52 @@ tasks.named<JavaCompile>("compileJava") {
 tasks.named<Jar>("jar") {
     dependsOn("compileAnnotations", "compileProcessor", "generateServiceFile")
     
-    // Обработка дубликатов - использовать первый найденный файл
+    // Handle duplicates - use the first found file
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
-    // Включаем все скомпилированные файлы в JAR
+    // Include all compiled files in JAR
     from("${buildDir}/classes/java/main")
     from("${buildDir}/classes/java/annotations")
     from("${buildDir}/classes/java/processor")
     
-    // Включаем META-INF/services
+    // Include META-INF/services
     from("${buildDir}/classes/java/processor/META-INF") {
         into("META-INF")
     }
 }
 
-// Создание Shadow JAR (fat jar) со всеми зависимостями
+// Create Shadow JAR (fat jar) with all dependencies
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveClassifier.set("")
     
-    // Обработка дубликатов - использовать первый найденный файл
+    // Handle duplicates - use the first found file
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     
-    // Включаем все скомпилированные файлы в JAR
+    // Include all compiled files in JAR
     from("${buildDir}/classes/java/main")
     from("${buildDir}/classes/java/annotations")
     from("${buildDir}/classes/java/processor")
     
-    // Включаем META-INF/services
+    // Include META-INF/services
     from("${buildDir}/classes/java/processor/META-INF") {
         into("META-INF")
     }
 }
 
-// Настройка Javadoc
+// Javadoc configuration
 tasks.javadoc {
     exclude("example/**")
     exclude("**/Main.java")
     options.encoding = "UTF-8"
     
-    // Опции для более подробной информации о ошибках
+    // Options for more detailed error information
     options {
         this as StandardJavadocDocletOptions
         addStringOption("Xdoclint:none", "-quiet")
     }
 }
 
-// Добавляем исходники и javadoc во все JAR
+// Add sources and javadoc to all JARs
 tasks.named<Jar>("sourcesJar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from(sourceSets.main.get().allSource)
@@ -138,7 +138,7 @@ tasks.named<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
 }
 
-// Настройка публикации в Maven
+// Maven publication configuration
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
@@ -181,12 +181,12 @@ publishing {
     }
 }
 
-// Настройка подписи артефактов (отключаем для JitPack)
+// Artifact signing configuration (disabled for JitPack)
 signing {
     setRequired(false)
 }
 
-// Создание файла сервиса для процессора аннотаций
+// Service file creation for annotation processor
 tasks.register("createServiceFile") {
     doLast {
         val servicesDir = file("src/main/resources/META-INF/services")
@@ -196,15 +196,15 @@ tasks.register("createServiceFile") {
     }
 }
 
-// Запуск всех тестов
+// Run all tests
 tasks.named<Test>("test") {
     useJUnit()
     
-    // Пропускаем тесты, так как они требуют дополнительной настройки
+    // Skip tests as they require additional configuration
     enabled = false
 }
 
-// Подготовка пути в зависимости от операционной системы
+// Prepare path depending on operating system
 fun getClasspathSeparator(): String {
     return if (System.getProperty("os.name").toLowerCase().contains("windows")) {
         ";"
@@ -213,17 +213,17 @@ fun getClasspathSeparator(): String {
     }
 }
 
-// Добавляем задачу для запуска компиляции тестов в правильном порядке
+// Add task for compiling tests in the correct order
 tasks.register("compileAllTests") {
     dependsOn("compileJava", "jar")
     doLast {
-        // Создаем директорию для тестов
+        // Create test directory
         mkdir("${buildDir}/test-classes")
         
-        // Получаем разделитель пути для текущей ОС
+        // Get path separator for current OS
         val pathSeparator = getClasspathSeparator()
         
-        // Компиляция интерфейсов с аннотацией @Root
+        // Compilation of interfaces with @Root annotation
         exec {
             workingDir = projectDir
             val cmd = mutableListOf("javac", 
@@ -245,17 +245,17 @@ tasks.register("compileAllTests") {
             }
         }
         
-        // Компиляция классов, которые используют сгенерированные классы
+        // Compilation of classes that use generated classes
         exec {
             workingDir = projectDir
             val cmd = mutableListOf("javac", 
                 "-d", "${buildDir}/test-classes",
                 "-cp", "${buildDir}/test-classes${pathSeparator}${buildDir}/libs/java-multiple-inheritance-1.0.0.jar${pathSeparator}${configurations.testCompileClasspath.get().asPath}",
-                // Все классы в тестовых пакетах кроме интерфейсов
+                // All classes in test packages except interfaces
                 "src/test/java/inheritance/tests/linear/ClassA.java",
                 "src/test/java/inheritance/tests/linear/ClassB.java",
                 "src/test/java/inheritance/tests/linear/ClassC.java",
-                // Другие классы можно добавить аналогично
+                // Other classes can be added similarly
                 "src/test/java/inheritance/tests/LinearInheritanceTest.java"
             )
             
@@ -268,7 +268,7 @@ tasks.register("compileAllTests") {
     }
 }
 
-// Задача для запуска тестов
+// Task for running tests
 tasks.register("runTests") {
     dependsOn("compileAllTests")
     doLast {
@@ -280,7 +280,7 @@ tasks.register("runTests") {
                 "-cp", "${buildDir}/test-classes${pathSeparator}${buildDir}/libs/java-multiple-inheritance-1.0.0.jar${pathSeparator}${configurations.testRuntimeClasspath.get().asPath}",
                 "org.junit.runner.JUnitCore",
                 "inheritance.tests.LinearInheritanceTest"
-                // Другие тесты можно добавить аналогично
+                // Other tests can be added similarly
             )
             
             if (System.getProperty("os.name").toLowerCase().contains("windows")) {
@@ -292,7 +292,7 @@ tasks.register("runTests") {
     }
 }
 
-// По умолчанию запускаем тесты и создаем все JAR
+// By default, run tests and create all JARs
 tasks.register("prepareRelease") {
     dependsOn("jar", "sourcesJar", "javadocJar", "shadowJar")
 }

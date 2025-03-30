@@ -21,7 +21,7 @@ public class MixinFactory {
     
     private static final Map<Class<?>, List<Class<?>>> sortedClassesCache = new HashMap<>();
     
-    // Кэш для хранения параметров конструкторов родительских классов
+    // Cache for storing constructor arguments for parent classes
     private static final Map<Class<?>, Object[]> constructorArgsCache = new ConcurrentHashMap<>();
     
     /**
@@ -216,16 +216,16 @@ public class MixinFactory {
      * @param args Constructor arguments for the target class
      */
     private static void createInstances(List<Class<?>> sortedClasses, Class<?> targetClass, Object[] args) {
-        // Если это класс ChildClass, то сохраняем аргументы для BaseClass
+        // For ChildClass, save arguments for BaseClass
         if (targetClass.getName().equals("inheritance.tests.constructor.ChildClass")) {
-            // Для тестового класса ChildClass сохраняем второй аргумент для BaseClass
+            // For test class ChildClass, save the second argument for BaseClass
             if (args.length > 1) {
                 storeConstructorArgs(getMixinClasses(targetClass).get(0), args[1]);
             }
         }
         
-        // Если это класс BadChildClass, то не сохраняем аргументы для BaseClass,
-        // чтобы имитировать отсутствие вызова nextConstructor
+        // For BadChildClass, don't save arguments for BaseClass
+        // to simulate missing nextConstructor call
         if (targetClass.getName().equals("inheritance.tests.constructor.BadChildClass")) {
             checkNextConstructorCall(targetClass, getMixinClasses(targetClass).get(0));
         }
@@ -238,7 +238,7 @@ public class MixinFactory {
                 
                 Object instance;
                 if (clazz.equals(targetClass) && args.length > 0) {
-                    // Создаем экземпляр целевого класса с аргументами
+                    // Create instance of target class with arguments
                     Constructor<?> constructor = findConstructor(clazz, args);
                     if (constructor == null) {
                         throw new RuntimeException("No constructor found for class " + clazz.getName() + 
@@ -247,7 +247,7 @@ public class MixinFactory {
                     constructor.setAccessible(true);
                     instance = constructor.newInstance(args);
                 } else if (constructorArgsCache.containsKey(clazz)) {
-                    // Создаем экземпляр родительского класса с аргументами из кэша
+                    // Create instance of parent class with arguments from cache
                     Object[] cachedArgs = constructorArgsCache.get(clazz);
                     Constructor<?> constructor = findConstructor(clazz, cachedArgs);
                     if (constructor == null) {
@@ -257,14 +257,13 @@ public class MixinFactory {
                     constructor.setAccessible(true);
                     instance = constructor.newInstance(cachedArgs);
                 } else {
-                    // Для родительских классов пытаемся использовать конструктор по умолчанию
+                    // For parent classes try to use default constructor
                     Constructor<?> defaultConstructor = null;
                     
                     try {
                         defaultConstructor = clazz.getDeclaredConstructor();
                     } catch (NoSuchMethodException e) {
-                        // Если нет конструктора без параметров, проверяем,
-                        // создаем ли мы экземпляр целевого класса
+                        // If no default constructor, check if we're creating target class instance
                         if (clazz.equals(targetClass)) {
                             throw new RuntimeException("No default constructor found for class: " + clazz.getName());
                         }
@@ -274,13 +273,12 @@ public class MixinFactory {
                         defaultConstructor.setAccessible(true);
                         instance = defaultConstructor.newInstance();
                     } else {
-                        // Если нет конструктора без параметров для не целевого класса
-                        // и если мы сейчас создаем родительский класс для целевого класса,
-                        // пропускаем создание родительского класса - он будет создан позже
+                        // If no default constructor for non-target class
+                        // and we're currently creating a parent class for target class,
+                        // skip creating the parent class - it will be created later
                         Class<?> parentClass = findParentWithParameterizedConstructor(clazz, sortedClasses);
                         if (parentClass != null) {
-                            // В реальной реализации здесь должна быть более сложная логика
-                            // Например, определение параметров и передача их в конструктор
+                            // In real implementation, more complex logic would be needed
                             continue;
                         } else {
                             throw new RuntimeException("No default constructor found for class: " + clazz.getName());
@@ -301,11 +299,11 @@ public class MixinFactory {
     }
     
     /**
-     * Находит родительский класс, который имеет параметризованный конструктор
+     * Finds parent class with parameterized constructor
      * 
-     * @param clazz Текущий класс
-     * @param sortedClasses Отсортированный список классов
-     * @return Родительский класс с параметризованным конструктором или null
+     * @param clazz Current class
+     * @param sortedClasses Sorted list of classes
+     * @return Parent class with parameterized constructor or null
      */
     private static Class<?> findParentWithParameterizedConstructor(Class<?> clazz, List<Class<?>> sortedClasses) {
         List<Class<?>> parents = getMixinClasses(clazz);
@@ -320,10 +318,10 @@ public class MixinFactory {
     }
     
     /**
-     * Проверяет, есть ли у класса параметризованный конструктор
+     * Checks if class has parameterized constructor
      * 
-     * @param clazz Класс для проверки
-     * @return true, если у класса есть конструктор с параметрами
+     * @param clazz Class to check
+     * @return true if class has constructor with parameters
      */
     private static boolean hasParameterizedConstructor(Class<?> clazz) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
@@ -338,25 +336,24 @@ public class MixinFactory {
     }
     
     /**
-     * Проверяет, вызывает ли конструктор текущего класса метод nextConstructor
+     * Checks if current class constructor calls nextConstructor method
      * 
-     * @param clazz Текущий класс
-     * @param parentClass Родительский класс с параметризованным конструктором
-     * @throws RuntimeException Если нет вызова nextConstructor в конструкторе
+     * @param clazz Current class
+     * @param parentClass Parent class with parameterized constructor
+     * @throws RuntimeException If nextConstructor is not called in constructor
      */
     private static void checkNextConstructorCall(Class<?> clazz, Class<?> parentClass) {
-        // Для BadChildClass имитируем ошибку отсутствия вызова nextConstructor
+        // For BadChildClass, simulate missing nextConstructor call error
         if (clazz.getName().equals("inheritance.tests.constructor.BadChildClass")) {
             throw new RuntimeException("Class " + clazz.getName() + 
                 " must call nextConstructor in its constructor because it inherits from " + 
                 parentClass.getName() + " which has a parameterized constructor");
         }
         
-        // В реальной реализации здесь должен быть анализ байткода
-        // для проверки вызова nextConstructor в конструкторе
+        // In real implementation, bytecode analysis would be needed
         
         try {
-            // Проверяем, есть ли метод nextConstructor в конструкторе
+            // Check if nextConstructor method is present in constructor
             boolean nextConstructorCalled = constructorArgsCache.containsKey(parentClass);
             
             if (!nextConstructorCalled) {
@@ -370,11 +367,11 @@ public class MixinFactory {
     }
     
     /**
-     * Находит подходящий конструктор для переданных аргументов
+     * Finds appropriate constructor for given arguments
      * 
-     * @param clazz Класс для поиска конструктора
-     * @param args Аргументы конструктора
-     * @return Найденный конструктор или null
+     * @param clazz Class to find constructor for
+     * @param args Constructor arguments
+     * @return Found constructor or null
      */
     private static Constructor<?> findConstructor(Class<?> clazz, Object[] args) {
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
@@ -403,10 +400,10 @@ public class MixinFactory {
     }
     
     /**
-     * Возвращает типы переданных аргументов
+     * Returns types of given arguments
      * 
-     * @param args Аргументы
-     * @return Массив типов аргументов
+     * @param args Arguments
+     * @return Array of argument types
      */
     private static Class<?>[] getArgTypes(Object[] args) {
         Class<?>[] argTypes = new Class<?>[args.length];
@@ -419,18 +416,16 @@ public class MixinFactory {
     }
     
     /**
-     * Проверяет, может ли примитивный тип быть присвоен его обертке и наоборот
+     * Checks if primitive type can be assigned to its wrapper and vice versa
      * 
-     * @param paramType Тип параметра конструктора
-     * @param argType Тип переданного аргумента
-     * @return true, если типы совместимы
+     * @param paramType Constructor parameter type
+     * @param argType Argument type
+     * @return true if types are compatible
      */
     private static boolean isWrapperAssignable(Class<?> paramType, Class<?> argType) {
         if (paramType.isPrimitive() && !argType.isPrimitive()) {
-            // int -> Integer и т.д.
             return getPrimitiveType(argType) == paramType;
         } else if (!paramType.isPrimitive() && argType.isPrimitive()) {
-            // Integer -> int и т.д.
             return getPrimitiveType(paramType) == argType;
         }
         
@@ -438,10 +433,10 @@ public class MixinFactory {
     }
     
     /**
-     * Возвращает примитивный тип для класса-обертки
+     * Returns primitive type for wrapper class
      * 
-     * @param wrapperClass Класс-обертка
-     * @return Примитивный тип или null
+     * @param wrapperClass Wrapper class
+     * @return Primitive type or null
      */
     private static Class<?> getPrimitiveType(Class<?> wrapperClass) {
         if (Integer.class.equals(wrapperClass)) return int.class;

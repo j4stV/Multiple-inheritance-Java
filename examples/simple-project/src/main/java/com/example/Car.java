@@ -1,37 +1,35 @@
 package com.example;
 
 /**
- * Базовый класс автомобиля
+ * Base car class
  */
 public class Car extends VehicleRoot {
     private boolean engineRunning = false;
+    protected int speed = 0;
     
     @Override
     public void startEngine() {
-        System.out.println("Car: Starting engine");
+        System.out.println("Car.startEngine(): Starting car engine");
         engineRunning = true;
-        nextStartEngine(); // Вызывает метод следующего класса в цепочке
+        nextStartEngine();
     }
     
     @Override
     public void stopEngine() {
-        System.out.println("Car: Stopping engine");
+        System.out.println("Car.stopEngine(): Stopping car engine");
         engineRunning = false;
-        nextStopEngine(); // Вызывает метод следующего класса в цепочке
+        nextStopEngine();
     }
     
     @Override
     public void move() {
-        if (engineRunning) {
-            System.out.println("Car: Moving on road");
-        } else {
-            System.out.println("Car: Cannot move, engine is off");
-        }
-        nextMove(); // Вызывает метод следующего класса в цепочке
+        speed = 60;
+        System.out.println("Car.move(): Moving at " + speed + " km/h");
+        nextMove();
     }
     
     /**
-     * Метод, специфичный для автомобиля
+     * Method specific to the car
      */
     public void honk() {
         System.out.println("Car: Honk! Honk!");
