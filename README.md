@@ -14,53 +14,50 @@ This library provides an implementation of multiple inheritance mechanism for Ja
 3. **Factory**:
    - `MixinFactory` - creates instances of classes with correctly configured inheritance chain
 
-## Usage Instructions
+## Framework Integration into Project
 
-### 1. Project Setup
+### Gradle KTS
 
-To start using the library, add its JAR file to your project and ensure that the annotation processor is included in the compilation process.
+```kotlin
+// Adding Maven repository (if publishing to Maven Central)
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+}
 
-For Maven build, add to `pom.xml`:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.example</groupId>
-        <artifactId>java-multiple-inheritance</artifactId>
-        <version>1.0.0</version>
-    </dependency>
-</dependencies>
-
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <version>3.8.1</version>
-            <configuration>
-                <source>11</source>
-                <target>11</target>
-                <annotationProcessorPaths>
-                    <path>
-                        <groupId>com.example</groupId>
-                        <artifactId>java-multiple-inheritance</artifactId>
-                        <version>1.0.0</version>
-                    </path>
-                </annotationProcessorPaths>
-            </configuration>
-        </plugin>
-    </plugins>
-</build>
-```
-
-For Gradle build, add to `build.gradle`:
-
-```groovy
+// Adding dependency
 dependencies {
-    implementation 'com.example:java-multiple-inheritance:1.0.0'
-    annotationProcessor 'com.example:java-multiple-inheritance:1.0.0'
+    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
+    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
 }
 ```
+
+### Gradle Groovy
+
+```groovy
+// Adding Maven repository (if publishing to Maven Central)
+repositories {
+    mavenCentral()
+    maven("https://jitpack.io")
+}
+
+// Adding dependency
+dependencies {
+    implementation 'com.java.multiple.inheritance:java-multiple-inheritance:1.0.1'
+    annotationProcessor 'com.java.multiple.inheritance:java-multiple-inheritance:1.0.1'
+}
+```
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>com.java.multiple.inheritance</groupId>
+    <artifactId>java-multiple-inheritance</artifactId>
+    <version>1.0.1</version>
+</dependency>
+```
+
 
 ### 2. Creating a Root Interface
 
@@ -236,36 +233,7 @@ MixinFactory.setDebugEnabled(true); // or false
 java -cp bin Main --debug=true
 ```
 
-## Compilation and Execution
 
-### Project Compilation
-
-The project can be compiled using the `compile.bat` script (Windows) or `compile.sh` (Linux/macOS):
-
-```bash
-.\compile.bat
-```
-
-### Running Examples
-
-After compilation, you can run the examples:
-
-```bash
-# Main example
-java -cp bin Main
-
-# Diamond inheritance test
-java -cp bin example.diamond.DiamondTest
-
-# Simple test
-java -cp bin SimpleTest
-
-# Complex inheritance example
-java -cp bin ComplexInheritanceExample
-
-# Method inheritance demo
-java -cp bin MethodInheritanceDemo
-```
 
 ## Limitations
 
@@ -295,153 +263,3 @@ src/main/java/
 
 MIT License
 
-## Framework Integration into Project
-
-### Gradle KTS
-
-```kotlin
-// Adding Maven repository (if publishing to Maven Central)
-repositories {
-    mavenCentral()
-    // If you have a local repository
-    // maven { url = uri("file:///path/to/local/repo") }
-}
-
-// Adding dependency
-dependencies {
-    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
-    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
-}
-```
-
-### Gradle Groovy
-
-```groovy
-// Adding Maven repository (if publishing to Maven Central)
-repositories {
-    mavenCentral()
-    // If you have a local repository
-    // maven { url 'file:///path/to/local/repo' }
-}
-
-// Adding dependency
-dependencies {
-    implementation 'com.java.multiple.inheritance:java-multiple-inheritance:1.0.0'
-    annotationProcessor 'com.java.multiple.inheritance:java-multiple-inheritance:1.0.0'
-}
-```
-
-### Maven
-
-```xml
-<dependency>
-    <groupId>com.java.multiple.inheritance</groupId>
-    <artifactId>java-multiple-inheritance</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-## Creating a Local Repository
-
-If you don't want to publish the framework to Maven Central, you can create a local repository:
-
-```bash
-# Build and publish to local repository
-./gradlew publishToMavenLocal
-```
-
-After this, JAR files will be available in your local Maven repository (usually ~/.m2/repository/).
-
-## Usage Example in Project
-
-1. Create an interface and mark it with the `@Root` annotation:
-
-```java
-import inheritance.annotations.Root;
-
-@Root
-public interface MyInterface {
-    void someMethod();
-}
-```
-
-2. Implement a base class extending the generated `MyInterfaceRoot`:
-
-```java
-public class BaseClass extends MyInterfaceRoot {
-    @Override
-    public void someMethod() {
-        System.out.println("BaseClass implementation");
-        nextSomeMethod(); // Call the next method in the chain
-    }
-}
-```
-
-3. Create a class with multiple inheritance using the `@Mixin` annotation:
-
-```java
-import inheritance.annotations.Mixin;
-
-@Mixin({BaseClass.class, OtherClass.class})
-public class MultiInheritClass extends MyInterfaceRoot {
-    @Override
-    public void someMethod() {
-        System.out.println("MultiInheritClass starting");
-        nextSomeMethod(); // Forward call to parent classes
-        System.out.println("MultiInheritClass ending");
-    }
-}
-```
-
-4. Create an instance using the factory:
-
-```java
-import inheritance.factory.MixinFactory;
-
-public class Main {
-    public static void main(String[] args) {
-        // Create an instance of a class with multiple inheritance
-        MultiInheritClass instance = MixinFactory.createInstance(MultiInheritClass.class);
-        
-        // Call a method that will be executed along the inheritance chain
-        instance.someMethod();
-    }
-}
-```
-
-## Framework Building and Installation
-
-To build the framework using Gradle, execute:
-
-```bash
-# Clone repository
-git clone https://github.com/yourusername/java-multiple-inheritance.git
-cd java-multiple-inheritance
-
-# Build framework
-./gradlew build
-
-# Publish to local Maven repository
-./gradlew publishToMavenLocal
-```
-
-After publication, the framework can be integrated into other projects through a build system:
-
-```kotlin
-// build.gradle.kts (Kotlin DSL)
-dependencies {
-    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
-    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
-}
-```
-
-## Usage Examples
-
-The `examples/simple-project` directory contains an example of using the framework to create an `Amphibian` class with multiple inheritance from `Car` and `Boat`.
-
-To run the example:
-
-```bash
-cd examples/simple-project
-./gradlew run
-```
