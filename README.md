@@ -27,8 +27,8 @@ repositories {
 
 // Adding dependency
 dependencies {
-    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
-    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.0")
+    implementation("com.java.multiple.inheritance:java-multiple-inheritance:1.0.1")
+    annotationProcessor("com.java.multiple.inheritance:java-multiple-inheritance:1.0.1")
 }
 ```
 
